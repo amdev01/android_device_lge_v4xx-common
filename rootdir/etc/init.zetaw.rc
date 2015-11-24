@@ -460,7 +460,7 @@ service qmiproxy /system/bin/qmiproxy
 service qmuxd /system/bin/qmuxd
     class main
     user radio
-    group radio audio bluetooth gps diag qcom_diag
+    group radio audio bluetooth wakelock gps diag qcom_diag
 
 service netmgrd /system/bin/netmgrd
     class main
