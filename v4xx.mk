@@ -226,6 +226,7 @@ PRODUCT_PACKAGES += \
     libwcnss_qmi \
     libwpa_client \
     wcnss_service \
+    wificond \
     wpa_supplicant \
     wpa_supplicant.conf
 
