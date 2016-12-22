@@ -150,6 +150,11 @@ PRODUCT_SHIPPING_API_LEVEL := 19
 # TODO (needs libtime_genoff)
 # BOARD_USES_QC_TIME_SERVICES := true
 
+ifeq ($(WITH_TWRP),true)
+include device/lge/v4xx-common/twrp.mk
+-include vendor/lineagetwrp/BoardConfigExtra.mk
+endif
+
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_WLAN_DEVICE := qcwcn
