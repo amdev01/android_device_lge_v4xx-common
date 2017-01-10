@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2017 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +17,8 @@
 #
 
 set -e
+
+INITIAL_COPYRIGHT_YEAR=2014
 
 DEVICE_COMMON=v4xx-common
 VENDOR=lge
@@ -46,6 +49,7 @@ write_makefiles "$MY_DIR"/proprietary-files.txt
 write_footers
 
 # Initialize the helper for device
+INITIAL_COPYRIGHT_YEAR="$DEVICE_BRINGUP_YEAR"
 setup_vendor "$DEVICE" "$VENDOR" "$CM_ROOT"
 
 # Copyright headers and guards
