@@ -241,7 +241,7 @@ on post-fs-data
 # Mobile DM Router
     chmod 0660 /dev/lge_dm_tty0
     chown system system /dev/lge_dm_tty0
-	
+
     # SSR feature
     chmod 0660 /dev/ramdump_adsp
     chown system system /dev/ramdump_adsp
@@ -251,13 +251,13 @@ on post-fs-data
 
     chmod 0660 /dev/ramdump_modem
     chown system system /dev/ramdump_modem
-    
+
     chmod 0660 /dev/ramdump_smem-modem
     chown system system /dev/ramdump_smem-modem
-    
+
     chmod 0660 /dev/ramdump_smem-smd
     chown system system /dev/ramdump_smem-smd
-    
+
     chmod 0660 /dev/ramdump_venus
     chown system system /dev/ramdump_venus
 
@@ -508,7 +508,7 @@ service amp_unload /system/bin/amploader -u
     disabled
     oneshot
 
-service wpa_supplicant /system/bin/wpa_supplicant \
+service wpa_supplicant /system/vendor/bin/hw/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf -N \
     -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
@@ -906,11 +906,11 @@ on property:persist.service.ssr_dump.ssr=1
     write /sys/devices/fc880000.qcom,mss/subsys1/restart_level RELATED
 
 on property:persist.service.ssr_dump.ssr=0
-    write /sys/devices/fc880000.qcom,mss/subsys1/restart_level SYSTEM 
+    write /sys/devices/fc880000.qcom,mss/subsys1/restart_level SYSTEM
 
 service moca_service /system/bin/moca -s
     class late_start
-    user root 
+    user root
     group system sdcard_r sdcard_rw radio
     disabled
     oneshot
@@ -918,7 +918,7 @@ service moca_service /system/bin/moca -s
 
 service moca_restart /system/bin/moca_restart
     class late_start
-    user root 
+    user root
     group system sdcard_r sdcard_rw radio
     disabled
     oneshot
@@ -929,7 +929,7 @@ service moca_ssr_ramdump /system/bin/subsystem_ramdump 1
     group system sdcard_r sdcard_rw radio
     disabled
     oneshot
-	
+
 on property:persist.service.moca.enable=1
     start moca_service
     start moca_restart
