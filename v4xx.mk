@@ -116,6 +116,10 @@ PRODUCT_PACKAGES += \
     memtrack.msm8226 \
     liboverlay
 
+# Default OMX service to non-Treble
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.media.treble_omx=false
+
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8226
