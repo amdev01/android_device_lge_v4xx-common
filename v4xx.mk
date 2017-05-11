@@ -115,10 +115,6 @@ PRODUCT_PACKAGES += \
     memtrack.msm8226 \
     liboverlay
 
-# Gello
-PRODUCT_PACKAGES += \
-    Gello
-
 # Default OMX service to non-Treble
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.media.treble_omx=false
