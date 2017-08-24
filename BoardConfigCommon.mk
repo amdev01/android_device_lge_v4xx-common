@@ -68,7 +68,6 @@ TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 BOARD_GLOBAL_CFLAGS += -DCAMERA_VENDOR_L_COMPAT
 
 # CMHW
-BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/cmhw/
 TARGET_TAP_TO_WAKE_NODE := "/sys/devices/virtual/input/lge_touch/tap_to_wake"
 
 # Display
@@ -86,6 +85,9 @@ TARGET_USE_COMPAT_GRALLOC_PERFORM := true
 
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
+
+# HIDL
+DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
