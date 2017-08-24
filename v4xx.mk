@@ -74,6 +74,8 @@ PRODUCT_COPY_FILES += \
     device/lge/v4xx-common/configs/mixer_paths.xml:system/etc/mixer_paths.xml
 
 PRODUCT_PACKAGES += \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
     audiod \
     audio.a2dp.default \
     audio.primary.msm8226 \
@@ -104,6 +106,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    android.hardware.camera.provider@2.4-impl-legacy \
+    camera.device@1.0-impl-legacy \
     Snap \
     camera.msm8226 \
     libshim_atomic \
@@ -111,6 +115,10 @@ PRODUCT_PACKAGES += \
 
 # Display
 PRODUCT_PACKAGES += \
+    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.graphics.composer@2.1-impl \
+    android.hardware.graphics.memtrack@1.0-impl \
     copybit.msm8226 \
     gralloc.msm8226 \
     hwcomposer.msm8226 \
@@ -121,8 +129,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.media.treble_omx=false
 
+# DRM
+PRODUCT_PACKAGES += \
+    android.hardware.drm@1.0-impl
+
 # GPS
 PRODUCT_PACKAGES += \
+    android.hardware.gnss@1.0-impl \
     gps.msm8226
 
 # IPv6 tethering
@@ -133,6 +146,10 @@ PRODUCT_PACKAGES += \
 # IRSC
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/sec_config:system/etc/sec_config
+
+# IRDA
+# PRODUCT_PACKAGES += \
+#    android.hardware.ir@1.0-impl
 
 # Keylayout
 PRODUCT_COPY_FILES += \
@@ -145,10 +162,15 @@ PRODUCT_COPY_FILES += \
 
 # Keystore
 #PRODUCT_PACKAGES += \
+#    android.hardware.keymaster@3.0-impl \
 #    keystore.msm8226
+
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0-impl
 
 # Lights
 PRODUCT_PACKAGES += \
+    android.hardware.light@2.0-impl \
     lights.msm8226
 
 # Media
@@ -163,6 +185,7 @@ PRODUCT_COPY_FILES += \
 # NFC
 # TODO
 #PRODUCT_PACKAGES += \
+#    android.hardware.nfc@1.0-impl \
 #    com.android.nfc_extras \
 #    NfcNci \
 #    nfc_nci.pn54x.default \
@@ -194,6 +217,7 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
+    android.hardware.power@1.0-impl \
     power.msm8226
 
 # Qualcomm
@@ -225,6 +249,18 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/mediacodec.policy:system/vendor/etc/seccomp_policy/mediacodec.policy \
     $(LOCAL_PATH)/configs/mediaextractor.policy:system/vendor/etc/seccomp_policy/mediaextractor.policy
+
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl
+
+# USB
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service
+
+# Vibrator
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator@1.0-impl
 
 # Wifi
 PRODUCT_PACKAGES += \
