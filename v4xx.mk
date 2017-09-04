@@ -110,7 +110,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Snap \
     camera.msm8226 \
-    libcamera_parameters_shim
+    libcamera_parameters_shim \
+    libshim_atomic
 
 # Display
 PRODUCT_PACKAGES += \
