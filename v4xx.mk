@@ -112,7 +112,8 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl-legacy \
     Snap \
     camera.msm8226 \
-    libcamera_parameters_shim
+    libcamera_parameters_shim \
+    libshim_atomic
 
 # Configstore
 PRODUCT_PACKAGES += \
