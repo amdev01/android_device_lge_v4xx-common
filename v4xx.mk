@@ -231,6 +231,13 @@ PRODUCT_PACKAGES += \
     init.zetaw.usb.sh \
     ueventd.v4xx.rc
 
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sensors/_hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/_hals.conf
+
 # Vibrator
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.1-service.v4xx
