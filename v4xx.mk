@@ -237,6 +237,13 @@ PRODUCT_PACKAGES += \
     init.zetaw.usb.sh \
     ueventd.v4xx.rc
 
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sensors/_hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/_hals.conf
+
 # USB HIDL interfaces
 PRODUCT_PACKAGES += \
     android.hardware.usb@1.0-service
