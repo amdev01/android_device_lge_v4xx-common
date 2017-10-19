@@ -434,14 +434,14 @@ service bt-sap /system/bin/sapd 15
 service ftmd /system/bin/ftmdaemon
     class late_start
     user root
-    group bluetooth net_bt_admin misc bluetooth qcom_diag
+    group bluetooth net_bt_admin misc bluetooth oem_2901
     disabled
     oneshot
 
 service bridgemgrd /system/bin/bridgemgrd
     class late_start
     user radio
-    group radio qcom_diag
+    group radio oem_2901
     disabled
 
 service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0
@@ -453,14 +453,14 @@ service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0
 service qmiproxy /system/bin/qmiproxy
     class main
     user radio
-    group radio qcom_diag
+    group radio oem_2901
     disabled
 
 # QMUX must be in multiple groups to support external process connections
 service qmuxd /system/bin/qmuxd
     class main
     user radio
-    group radio audio bluetooth wakelock gps diag qcom_diag
+    group radio audio bluetooth wakelock gps diag oem_2901
 
 service netmgrd /system/bin/netmgrd
     class main
@@ -547,13 +547,13 @@ service gpsone_daemon /system/bin/gpsone_daemon
 service quipc_igsn /system/bin/quipc_igsn
     class late_start
     user gps
-    group inet gps qcom_diag
+    group inet gps oem_2901
     disabled
 
 service quipc_main /system/bin/quipc_main
     class late_start
     user gps
-    group gps net_admin wifi inet qcom_diag
+    group gps net_admin wifi inet oem_2901
     disabled
 
 service location_mq /system/bin/location-mq
@@ -571,13 +571,13 @@ service xtwifi_inet /system/bin/xtwifi-inet-agent
 service xtwifi_client /system/bin/xtwifi-client
     class late_start
     user gps
-    group net_admin wifi inet gps qcom_diag
+    group net_admin wifi inet gps oem_2901
     disabled
 
 service lowi-server /system/bin/lowi-server
     class late_start
     user gps
-    group gps net_admin wifi inet qcom_diag
+    group gps net_admin wifi inet oem_2901
     disabled
 service fm_dl /system/bin/sh /system/etc/init.zetaw.fm.sh
     class late_start
@@ -767,14 +767,14 @@ on ffbm
 service diag_mdlog_start /system/bin/diag_mdlog
     class late_start
     user sdcard_rw
-    group system qcom_diag sdcard_rw sdcard_r media_rw
+    group system oem_2901 sdcard_rw sdcard_r media_rw
     disabled
     oneshot
 
 service diag_mdlog_stop /system/bin/diag_mdlog -k
     class late_start
     user sdcard_rw
-    group system qcom_diag sdcard_rw sdcard_r media_rw
+    group system oem_2901 sdcard_rw sdcard_r media_rw
     disabled
     oneshot
 

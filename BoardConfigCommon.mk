@@ -88,6 +88,7 @@ EXTENDED_FONT_FOOTPRINT := true
 
 # HIDL
 DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
+TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
