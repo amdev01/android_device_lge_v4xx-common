@@ -240,6 +240,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libxml2
 
+# RenderScript HAL
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0-impl
+
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.v4xx \
