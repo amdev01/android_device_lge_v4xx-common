@@ -139,6 +139,11 @@ TARGET_USE_SDCLANG := true
 
 TARGET_USES_LEGACY_ADB_INTERFACE := true
 
+# Shims
+TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so \
+        /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
+        /system/vendor/lib/libcamera_client.so|libcamera_parameters_shim.so
+
 # Time services
 # TODO (needs libtime_genoff)
 # BOARD_USES_QC_TIME_SERVICES := true
