@@ -141,6 +141,13 @@ include device/qcom/sepolicy/sepolicy.mk
 include device/qcom/sepolicy/legacy-sepolicy.mk
 BOARD_SEPOLICY_DIRS += device/lge/v4xx-common/sepolicy
 
+# Shims
+TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so \
+        /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
+        /system/vendor/lib/libcamera_client.so|libcamera_parameters_shim.so \
+        /system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so \
+        /system/vendor/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so
+
 # Time services
 # TODO (needs libtime_genoff)
 # BOARD_USES_QC_TIME_SERVICES := true
