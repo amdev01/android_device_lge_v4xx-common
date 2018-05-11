@@ -138,7 +138,8 @@ TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat
         /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
         /system/vendor/lib/libcamera_client.so|libcamera_parameters_shim.so \
         /system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so \
-        /system/vendor/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so
+        /system/vendor/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so \
+        /system/vendor/bin/mpdecision|libshim_atomic.so
 
 # Shipping API level (for CTS backward compatibility)
 PRODUCT_SHIPPING_API_LEVEL := 19
