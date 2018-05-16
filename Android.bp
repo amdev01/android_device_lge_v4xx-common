@@ -1,3 +1,7 @@
 subdirs = [
+<<<<<<< HEAD
     "sensors",
+=======
+    "light",
+>>>>>>> 586e0e0 (v521: Add lights HAL)
 ]
