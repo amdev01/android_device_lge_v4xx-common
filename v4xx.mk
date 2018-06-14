@@ -160,7 +160,7 @@ PRODUCT_COPY_FILES += \
 
 # Keylayout
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/keylayout/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
+    $(LOCAL_PATH)/keylayout/gpio-keys.kl:system/vendor/usr/keylayout/gpio-keys.kl
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/qwerty2.idc:system/usr/idc/qwerty2.idc \
