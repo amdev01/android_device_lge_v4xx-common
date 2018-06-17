@@ -172,7 +172,7 @@ vendor/lib/libqc-opt.so
 # Sensors
 bin/irsc_util:vendor/bin/irsc_util
 bin/sensors.qcom:vendor/bin/sensors.qco
-vendor/lib/hw/sensors.msm8226.so
+vendor/lib/hw/sensors.msm8226.so:vendor/lib/hw/sensors.v4xx.so
 vendor/lib/libbmc050.so
 vendor/lib/libsensor1.so
 vendor/lib/libsensor_reg.so
