@@ -94,9 +94,6 @@ EXTENDED_FONT_FOOTPRINT := true
 # HIDL
 DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
 
-# Lights
-TARGET_PROVIDES_LIBLIGHT := true
-
 # Offmode Charging
 BOARD_HEALTHD_CUSTOM_CHARGER_RES := $(LOCAL_PATH)/charger/images
 
