@@ -35,8 +35,8 @@ namespace vibrator {
 namespace V1_0 {
 namespace implementation {
 
-static constexpr int MAX_INTENSITY = 127;
-static constexpr int MIN_INTENSITY = 1;
+static constexpr int MAX_INTENSITY = 31;
+static constexpr int MIN_INTENSITY = 12;
 
 static constexpr uint32_t CLICK_TIMING_MS = 20;
 
