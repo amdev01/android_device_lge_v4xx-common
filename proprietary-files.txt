@@ -1,14 +1,14 @@
 # Audio
 bin/adsprpcd:vendor/bin/adsprpcd
 bin/fm_qsoc_patches:vendor/bin/fm_qsoc_patches
-etc/ACDB/Bluetooth_cal.acdb:vendor/etc/ACDB/Bluetooth_cal.acdb
-etc/ACDB/General_cal.acdb:vendor/etc/ACDB/General_cal.acdb
-etc/ACDB/Global_cal.acdb:vendor/etc/ACDB/Global_cal.acdb
-etc/ACDB/Handset_cal.acdb:vendor/etc/ACDB/Handset_cal.acdb
-etc/ACDB/Hdmi_cal.acdb:vendor/etc/ACDB/Hdmi_cal.acdb
-etc/ACDB/Headset_cal.acdb:vendor/etc/ACDB/Headset_cal.acdb
-etc/ACDB/Speaker_cal.acdb:vendor/etc/ACDB/Speaker_cal.acdb
-etc/ACDB/workspaceFile.qwsp:vendor/etc/ACDB/workspaceFile.qwsp
+etc/ACDB/Bluetooth_cal.acdb
+etc/ACDB/General_cal.acdb
+etc/ACDB/Global_cal.acdb
+etc/ACDB/Handset_cal.acdb
+etc/ACDB/Hdmi_cal.acdb:
+etc/ACDB/Headset_cal.acdb
+etc/ACDB/Speaker_cal.acdb
+etc/ACDB/workspaceFile.qwsp
 vendor/lib/libacdbloader.so
 vendor/lib/libacdbmapper.so
 vendor/lib/libacdbrtac.so
@@ -29,7 +29,7 @@ vendor/lib/rfsa/adsp/libfastcvadsp_skel.so
 
 # Camera
 bin/mm-qcamera-daemon:vendor/bin/mm-qcamera-daemon
-etc/firmware/cpp_firmware_v1_2_0.fw:vendor/etc/firmware/cpp_firmware_v1_2_0.fw
+etc/firmware/cpp_firmware_v1_2_0.fw:vendor/firmware/cpp_firmware_v1_2_0.fw
 lib/hw/camera.vendor.msm8226.so:vendor/lib/hw/camera.vendor.msm8226.so
 lib/libchromatix_hi543_common.so:vendor/lib/libchromatix_hi543_common.so
 lib/libchromatix_hi543_default_video.so:vendor/lib/libchromatix_hi543_default_video.so
@@ -187,8 +187,8 @@ bin/qmiproxy:vendor/bin/qmiproxy
 bin/qmuxd:vendor/bin/qmuxd
 bin/radish:vendor/bin/radish
 bin/rmt_storage:vendor/bin/rmt_storage
-etc/data/dsi_config.xml:vendor/etc/data/dsi_config.xml
-etc/data/netmgr_config.xml:vendor/etc/data/netmgr_config.xml
+etc/data/dsi_config.xml:vendor/data/dsi_config.xml
+etc/data/netmgr_config.xml:vendor/data/netmgr_config.xml
 lib/libmdmdetect.so:vendor/lib/libmdmdetect.so
 lib/libuicc.so:vendor/lib/libuicc.so
 lib/libvss_common_core.so:vendor/lib/libvss_common_core.so

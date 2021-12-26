@@ -1,6 +1,6 @@
-import /init.zetaw.rc
-import /init.lge.early.rc
-import /init.lge.rc
+import /vendor/etc/init/hw/init.zetaw.rc
+#import /vendor/etc/init/hw/init.lge.early.rc
+import /vendor/etc/init/hw/init.lge.rc
 
 on early-init
     mkdir /firmware 0771 system system
