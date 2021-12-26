@@ -30,7 +30,7 @@ using android::hardware::vibrator::V1_0::implementation::Vibrator;
 using namespace android;
 
 static const char *ENABLE_PATH = "/sys/class/timed_output/vibrator/enable";
-static const char *AMPLITUDE_PATH = "/sys/devices/platform/tspdrv/nforce_timed";
+static const char *QPNP_AMPLITUDE_PATH = "/sys/devices/virtual/timed_output/vibrator/vtg_level";
 
 status_t registerVibratorService() {
     std::ofstream enable{ENABLE_PATH};
@@ -40,10 +40,10 @@ status_t registerVibratorService() {
         return -error;
     }
 
-    std::ofstream amplitude{AMPLITUDE_PATH};
+    std::ofstream amplitude{QPNP_AMPLITUDE_PATH};
     if (!amplitude) {
         int error = errno;
-        ALOGE("Failed to open %s (%d): %s", AMPLITUDE_PATH, error, strerror(error));
+        ALOGE("Failed to open %s (%d): %s", QPNP_AMPLITUDE_PATH, error, strerror(error));
         return -error;
     }
 
