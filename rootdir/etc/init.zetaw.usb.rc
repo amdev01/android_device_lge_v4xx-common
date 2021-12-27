@@ -25,7 +25,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-service zetaw-usb-sh /system/bin/sh /vendor/etc/init/hw/init.zetaw.usb.sh
+service zetaw-usb-sh /system/bin/sh /init.zetaw.usb.sh
     class core
     user root
     oneshot
