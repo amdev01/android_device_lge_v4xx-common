@@ -40,6 +40,9 @@ struct Light : public ILight {
 private:
     void setBacklight(const LightState& state);
     std::ofstream mBacklight;
+
+    std::unordered_map<Type, std::function<void(const LightState&)>> mLights;   
+    std::mutex mLock;
 };
 
 }  // namespace implementation
