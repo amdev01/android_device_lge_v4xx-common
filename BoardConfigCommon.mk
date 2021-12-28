@@ -86,7 +86,6 @@ OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
 TARGET_USE_COMPAT_GRALLOC_PERFORM := true
 SF_START_GRAPHICS_ALLOCATOR_SERVICE := true
 
-
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
 
@@ -122,6 +121,7 @@ BOARD_USES_QCOM_HARDWARE := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_NO_SECURE_DISCARD := true
 BOARD_RECOVERY_SWIPE := true
+BOARD_SUPPRESS_EMMC_WIPE := true
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
 TARGET_RECOVERY_FSTAB := device/lge/v4xx-common/rootdir/etc/fstab.v4xx
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
@@ -149,7 +149,7 @@ TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat
         /system/vendor/bin/mpdecision|libshim_atomic.so
 
 # Shipping API level (for CTS backward compatibility)
-PRODUCT_SHIPPING_API_LEVEL := 19
+#PRODUCT_SHIPPING_API_LEVEL := 19
 
 # Time services
 # TODO (needs libtime_genoff)
