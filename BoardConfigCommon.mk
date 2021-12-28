@@ -29,6 +29,9 @@ TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_MEMCPY_BASE_OPT_DISABLE := true
 TARGET_CPU_VARIANT := krait
 
+# Binder API version
+# TARGET_USES_64_BIT_BINDER := true
+
 # Bluetooth
 BOARD_HAVE_BLUETOOTH_QCOM := true
 BLUETOOTH_HCI_USE_MCT := true
@@ -104,8 +107,10 @@ BOARD_FLASH_BLOCK_SIZE := 131072
 TARGET_USERIMAGES_USE_F2FS := true
 
 # Power
-TARGET_POWERHAL_VARIANT := qcom
 TARGET_TAP_TO_WAKE_NODE := "/sys/devices/virtual/input/lge_touch/tap_to_wake"
+TARGET_HAS_LEGACY_POWER_STATS := true
+TARGET_HAS_NO_WIFI_STATS := true
+TARGET_USES_INTERACTION_BOOST := true
 
 # Qualcomm support
 BOARD_USES_QCOM_HARDWARE := true
@@ -114,7 +119,6 @@ BOARD_USES_QCOM_HARDWARE := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_NO_SECURE_DISCARD := true
 BOARD_RECOVERY_SWIPE := true
-BOARD_SUPPRESS_EMMC_WIPE := true
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
 TARGET_RECOVERY_FSTAB := device/lge/v4xx-common/rootdir/etc/fstab.v4xx
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
@@ -130,7 +134,19 @@ TARGET_USE_SDCLANG := true
 
 # SELinux
 #include device/qcom/sepolicy/sepolicy.mk
+#include device/qcom/sepolicy/legacy-sepolicy.mk
 #BOARD_SEPOLICY_DIRS += device/lge/v4xx-common/sepolicy
+
+# Shims
+TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so \
+        /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
+        /system/vendor/lib/libcamera_client.so|libcamera_parameters_shim.so \
+        /system/vendor/lib/libmmcamera2_stats_algorithm.so|libshim_atomic.so \
+        /system/vendor/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so \
+        /system/vendor/bin/mpdecision|libshim_atomic.so
+
+# Shipping API level (for CTS backward compatibility)
+PRODUCT_SHIPPING_API_LEVEL := 19
 
 # Time services
 # TODO (needs libtime_genoff)

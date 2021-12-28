@@ -83,7 +83,7 @@ on boot
     chown wifi wifi /sys/module/wlan/parameters/fwpath
 
 #start camera server as daemon
-service qcamerasvr /system/bin/mm-qcamera-daemon
+service qcamerasvr /system/vendor/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
@@ -94,14 +94,19 @@ on property:init.svc.media=restarting
 on property:init.svc.servicemanager=restarting
     restart qcamerasvr
 
-service timekeep /system/bin/timekeep restore
+service timekeep /system/vendor/bin/timekeep restore
    user root
    group root
    disabled
    oneshot
    seclabel u:r:timekeep:s0
 
-service thermal-engine /system/bin/thermal-engine
+service mpdecision /system/vendor/bin/mpdecision --avg_comp
+   class late_start
+   user root
+   group system
+
+service thermal-engine /system/vendor/bin/thermal-engine
    class main
    user root
    group root
@@ -113,16 +118,10 @@ on property:sys.boot_completed=1
     write /sys/kernel/mm/ksm/sleep_millisecs 500
     write /sys/kernel/mm/ksm/run 1
 
-
-service audiod /system/bin/audiod
-    class late_start
-    user system
-    group system
-
 on boot
     chown system system /sys/class/power_supply/battery/pseudo_batt
 
-service adsprpcd /system/bin/adsprpcd
+service adsprpcd /system/vendor/bin/adsprpcd
     class main
     user media
     group media
@@ -137,7 +136,7 @@ service imsdatadaemon /system/bin/imsdatadaemon
 on property:sys.ims.QMI_DAEMON_STATUS=1
     start imsdatadaemon
 
-service ims_rtp_daemon /system/bin/ims_rtp_daemon
+service ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
     class main
     user system
     group radio net_raw diag qcom_diag log

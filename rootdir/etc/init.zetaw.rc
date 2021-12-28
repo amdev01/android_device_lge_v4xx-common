@@ -32,7 +32,6 @@ on early-init
 	mount debugfs debugfs /sys/kernel/debug
 
 on init
-    export LD_SHIM_LIBS /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so:/system/vendor/lib/libOpenCL.so|libboringssl-compat.so:/system/lib/libcamera_client.so|libcamera_parameters_shim.so
 
     # Set permissions for persist partition
     mkdir /persist 0771 system system
@@ -196,7 +195,6 @@ on post-fs-data
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
-
 #    chown dhcp dhcp /data/misc/dhcp
 # CONFIG_LGE_WLAN_PATCH
 # to observe dnsmasq.leases file for dhcp information of soft ap.
@@ -403,12 +401,12 @@ on property:vold.decrypt=trigger_restart_min_framework
 on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
 
-service irsc_util /system/bin/irsc_util "/etc/sec_config"
+service irsc_util /system/vendor/bin/irsc_util "vendor/etc/sec_config"
     class main
     user root
     oneshot
 
-service rmt_storage /system/bin/rmt_storage
+service rmt_storage /system/vendor/bin/rmt_storage
     class core
     user root
     disabled
@@ -433,7 +431,7 @@ service bt-sap /system/bin/sapd 15
 service ftmd /system/bin/ftmdaemon
     class late_start
     user root
-    group bluetooth net_bt_admin misc bluetooth
+    group bluetooth net_bt_admin misc bluetooth qcom_diag
     disabled
     oneshot
 
@@ -449,24 +447,24 @@ service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0
     group system inet
     disabled
 
-service qmiproxy /system/bin/qmiproxy
+service qmiproxy /system/vendor/bin/qmiproxy
     class main
     user radio
     group radio qcom_diag
     disabled
 
 # QMUX must be in multiple groups to support external process connections
-service qmuxd /system/bin/qmuxd
+service qmuxd /system/vendor/bin/qmuxd
     class main
     user radio
-    group radio audio bluetooth wakelock gps diag
+    group radio audio bluetooth wakelock gps diag qcom_diag
 
-service netmgrd /system/bin/netmgrd
+service netmgrd /system/vendor/bin/netmgrd
     class main
     user root
-    group root wifi wakelock radio inet system
+    group root wifi wakelock radio inet
 
-service sensors /system/bin/sensors.qcom
+service sensors /system/vendor/bin/sensors.qcom
     class main
     user root
     group root
@@ -508,7 +506,7 @@ service amp_unload /system/bin/amploader -u
     disabled
     oneshot
 
-service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
+service wpa_supplicant /system/vendor/bin/hw/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf -N \
     -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
@@ -821,7 +819,7 @@ on property:service.keyguard.status=1
 on property:service.keyguard.status=2
     write /sys/devices/virtual/input/lge_touch/lockscreen 2
 
-service qseecomd /system/bin/qseecomd
+service qseecomd /system/vendor/bin/qseecomd
     class late_start
     user root
     group root
