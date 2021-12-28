@@ -93,6 +93,9 @@ EXTENDED_FONT_FOOTPRINT := true
 # HIDL
 DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
 
+# Lights
+TARGET_PROVIDES_LIBLIGHT := true
+
 # Offmode Charging
 BOARD_CHARGING_CMDLINE_NAME := "androidboot.mode"
 BOARD_CHARGING_CMDLINE_VALUE := "chargerlogo"
