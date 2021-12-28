@@ -133,8 +133,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.media.treble_omx=false
 
 # DRM
-PRODUCT_PACKAGES += \
-    android.hardware.drm@1.0-impl
+#PRODUCT_PACKAGES += \
+#    android.hardware.drm@1.0-impl
 
 # GPS
 PRODUCT_PACKAGES += \
@@ -235,8 +235,8 @@ PRODUCT_PACKAGES += \
     libxml2
 
 # RenderScript HAL
-PRODUCT_PACKAGES += \
-    android.hardware.renderscript@1.0-impl
+#PRODUCT_PACKAGES += \
+#    android.hardware.renderscript@1.0-impl
 
 # Ramdisk
 PRODUCT_PACKAGES += \
