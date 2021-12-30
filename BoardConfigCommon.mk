@@ -149,6 +149,8 @@ TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat
 # Shipping API level (for CTS backward compatibility)
 #PRODUCT_SHIPPING_API_LEVEL := 19
 
+TARGET_USES_LEGACY_ADB_INTERFACE := true
+
 # Time services
 # TODO (needs libtime_genoff)
 # BOARD_USES_QC_TIME_SERVICES := true
