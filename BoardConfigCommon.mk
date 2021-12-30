@@ -137,6 +137,8 @@ TARGET_USE_SDCLANG := true
 #include device/qcom/sepolicy/sepolicy.mk
 #BOARD_SEPOLICY_DIRS += device/lge/v4xx-common/sepolicy
 
+TARGET_USES_LEGACY_ADB_INTERFACE := true
+
 # Time services
 # TODO (needs libtime_genoff)
 # BOARD_USES_QC_TIME_SERVICES := true
