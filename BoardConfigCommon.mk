@@ -39,7 +39,7 @@ TARGET_BOOTLOADER_BOARD_NAME := MSM8226
 TARGET_NO_BOOTLOADER := true
 
 # Kernel
-BOARD_KERNEL_IMAGE_NAME = zImage-dtb
+BOARD_KERNEL_IMAGE_NAME = zImage
 BOARD_CUSTOM_BOOTIMG := true
 BOARD_CUSTOM_BOOTIMG_MK := $(LOCAL_PATH)/mkbootimg.mk
 BOARD_KERNEL_CMDLINE := console=none user_debug=31 msm_rtb.filter=0x37 androidboot.hardware=v4xx androidboot.selinux=permissive
@@ -138,10 +138,10 @@ TARGET_USE_SDCLANG := true
 TARGET_USES_LEGACY_ADB_INTERFACE := true
 
 # Shims
-TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so \
-        /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
-        /system/vendor/lib/libcamera_client.so|libcamera_parameters_shim.so \
-        /system/vendor/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so \
+TARGET_LD_SHIM_LIBS := /system/lib/libqomx_jpegenc.so|libboringssl-compat.so \
+        /system/lib/libOpenCL.so|libboringssl-compat.so \
+        /system/lib/libcamera_client.so|libcamera_parameters_shim.so \
+        /system/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so \
         /system/vendor/bin/mpdecision|libshim_atomic.so
 
 # Shipping API level (for CTS backward compatibility)

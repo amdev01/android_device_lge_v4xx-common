@@ -28,9 +28,9 @@ $(foreach f,$(1),$(shell echo $(f) | \
 endef
 
 # Create a link for the WCNSS config file, which ends up as a writable
-# version in /data/misc/wifi
-$(shell mkdir -p $(TARGET_OUT)/etc/firmware/wlan/prima; \
-    ln -sf /data/misc/wifi/WCNSS_qcom_cfg.ini \
-        $(TARGET_OUT)/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini)
+# version in /data/vendor/wifi
+$(shell mkdir -p $(TARGET_OUT)vendor/etc/firmware/wlan/prima; \
+    ln -sf /data/vendor/wifi/WCNSS_qcom_cfg.ini \
+        $(TARGET_OUT)/vendor/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini)
 
 endif

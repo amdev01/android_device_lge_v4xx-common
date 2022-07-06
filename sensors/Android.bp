@@ -1,5 +1,5 @@
 cc_library_static {
-    name: "multihal-v4xx",
+    name: "multihal-v4xx-msm8226",
     vendor: true,
     srcs: [
         "multihal.cpp",

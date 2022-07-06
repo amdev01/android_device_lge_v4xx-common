@@ -19,7 +19,7 @@
 #include <hardware/sensors.h>
 #include <hardware/hardware.h>
 
-static const char* MULTI_HAL_CONFIG_FILE_PATH = "/vendor/etc/sensors/_hals.conf";
+static const char* MULTI_HAL_CONFIG_FILE_PATH = "/system/vendor/etc/sensors/_hals.conf";
 
 // Depracated because system partition HAL config file does not satisfy treble requirements.
 static const char* DEPRECATED_MULTI_HAL_CONFIG_FILE_PATH = "/system/etc/sensors/_hals.conf";
