@@ -18,6 +18,41 @@
         </interface>
     </hal>
     <hal format="hidl">
+        <name>android.hardware.renderscript</name>
+        <transport arch="32">passthrough</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IDevice</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.memtrack</name>
+        <transport arch="32">passthrough</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IMemtrack</name>
+            <instance>default</instance>
+        </interface>
+    <hal format="hidl">
+        <name>android.hardware.light</name>
+        <transport>hwbinder</transport>
+        <version>2.0</version>
+        <interface>
+            <name>ILight</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.sensors</name>
+        <transport arch="32">passthrough</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ISensors</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
         <name>android.hardware.wifi</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -45,3 +80,4 @@
         </interface>
     </hal>
 </manifest>
+

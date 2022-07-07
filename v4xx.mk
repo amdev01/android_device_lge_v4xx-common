@@ -107,6 +107,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    android.hardware.camera.provider@2.4-impl-legacy \
+    camera.device@1.0-impl-legacy \
     Snap \
     camera.msm8226 \
     libcamera_parameters_shim \
@@ -116,6 +118,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.graphics.allocator@2.0-impl \
     android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.memtrack@1.0-impl \
     copybit.msm8226 \
     gralloc.msm8226 \
     hwcomposer.msm8226 \
@@ -203,7 +206,6 @@ PRODUCT_PACKAGES += \
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-impl \
-    android.hardware.power@1.0-service \
     power.msm8226
 
 # Qualcomm
@@ -231,6 +233,10 @@ PRODUCT_PACKAGES += \
     init.zetaw.usb.sh \
     ueventd.v4xx.rc
 
+# RenderScript HAL
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0-impl
+
 # Seccomp
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/mediacodec.policy:system/vendor/etc/seccomp_policy/mediacodec.policy \
@@ -242,6 +248,10 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/sensors/_hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/_hals.conf
+
+# USB
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service
 
 # Vibrator
 PRODUCT_PACKAGES += \
