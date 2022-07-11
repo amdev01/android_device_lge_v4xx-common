@@ -403,12 +403,12 @@ on property:vold.decrypt=trigger_restart_min_framework
 on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
 
-service irsc_util /system/bin/irsc_util "/etc/sec_config"
+service irsc_util /system/vendor/bin/irsc_util "/etc/sec_config"
     class main
     user root
     oneshot
 
-service rmt_storage /system/bin/rmt_storage
+service rmt_storage /system/vendor/bin/rmt_storage
     class core
     user root
     disabled
@@ -449,24 +449,24 @@ service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0
     group system inet
     disabled
 
-service qmiproxy /system/bin/qmiproxy
+service qmiproxy /system/vendor/bin/qmiproxy
     class main
     user radio
     group radio oem_2901
     disabled
 
 # QMUX must be in multiple groups to support external process connections
-service qmuxd /system/bin/qmuxd
+service qmuxd /system/vendor/bin/qmuxd
     class main
     user radio
     group radio audio bluetooth wakelock gps diag oem_2901
 
-service netmgrd /system/bin/netmgrd
+service netmgrd /system/vendor/bin/netmgrd
     class main
     user root
     group root wifi wakelock radio inet
 
-service sensors /system/bin/sensors.qcom
+service sensors /system/vendor/bin/sensors.qcom
     class main
     user root
     group root
@@ -821,7 +821,7 @@ on property:service.keyguard.status=1
 on property:service.keyguard.status=2
     write /sys/devices/virtual/input/lge_touch/lockscreen 2
 
-service qseecomd /system/bin/qseecomd
+service qseecomd /system/vendor/bin/qseecomd
     class late_start
     user root
     group root
