@@ -83,7 +83,7 @@ on boot
     chown wifi wifi /sys/module/wlan/parameters/fwpath
 
 #start camera server as daemon
-service qcamerasvr /system/bin/mm-qcamera-daemon
+service qcamerasvr /system/vendor/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
@@ -101,12 +101,12 @@ service timekeep /system/bin/timekeep restore
    oneshot
    seclabel u:r:timekeep:s0
 
-service mpdecision /system/bin/mpdecision --avg_comp
+service mpdecision /system/vendor/bin/mpdecision --avg_comp
    class late_start
    user root
    group system
 
-service thermal-engine /system/bin/thermal-engine
+service thermal-engine /system/vendor/bin/thermal-engine
    class main
    user root
    group root
@@ -142,7 +142,7 @@ service imsdatadaemon /system/bin/imsdatadaemon
 on property:sys.ims.QMI_DAEMON_STATUS=1
     start imsdatadaemon
 
-service ims_rtp_daemon /system/bin/ims_rtp_daemon
+service ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
     class main
     user system
     group radio net_raw diag oem_2901 log
@@ -151,7 +151,7 @@ service ims_rtp_daemon /system/bin/ims_rtp_daemon
 on property:sys.ims.DATA_DAEMON_STATUS=1
     start ims_rtp_daemon
 
-service wcnss-service /system/bin/wcnss_service
+service wcnss-service /system/vendor/bin/wcnss_service
     class late_start
     user root
     group system wifi
