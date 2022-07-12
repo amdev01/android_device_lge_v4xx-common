@@ -1,5 +1,4 @@
 import /system/vendor/etc/init/hw/init.zetaw.rc
-import /system/vendor/etc/init/hw/init.lge.early.rc
 import /system/vendor/etc/init/hw/init.lge.rc
 
 on early-init
@@ -94,7 +93,7 @@ on property:init.svc.media=restarting
 on property:init.svc.servicemanager=restarting
     restart qcamerasvr
 
-service timekeep /system/bin/timekeep restore
+service timekeep /system/vendor/bin/timekeep restore
    user root
    group root
    disabled
@@ -127,7 +126,7 @@ service audiod /system/bin/audiod
 on boot
     chown system system /sys/class/power_supply/battery/pseudo_batt
 
-service adsprpcd /system/bin/adsprpcd
+service adsprpcd /system/vendor/bin/adsprpcd
     class main
     user media
     group media
