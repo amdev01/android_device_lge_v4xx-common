@@ -88,7 +88,7 @@ TARGET_USE_COMPAT_GRALLOC_PERFORM := true
 EXTENDED_FONT_FOOTPRINT := true
 
 # HIDL
-DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
+DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/configs/manifest.xml
 TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 
 # Lights
@@ -121,7 +121,7 @@ BOARD_NO_SECURE_DISCARD := true
 BOARD_RECOVERY_SWIPE := true
 BOARD_SUPPRESS_EMMC_WIPE := true
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
-TARGET_RECOVERY_FSTAB := device/lge/v4xx-common/rootdir/etc/fstab.v4xx
+TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/etc/fstab.v4xx
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
 
