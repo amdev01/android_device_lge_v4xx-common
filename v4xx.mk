@@ -87,7 +87,6 @@ PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl \
     android.hardware.audio.effect@2.0-impl \
     android.hardware.soundtrigger@2.0-impl \
-    android.hardware.soundtrigger@2.0-service \
     audiod \
     audio.a2dp.default \
     audio.primary.msm8226 \
@@ -149,7 +148,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Gatekeeper
 PRODUCT_PACKAGES += \
     android.hardware.gatekeeper@1.0-impl \
-    android.hardware.gatekeeper@1.0-service
+    gatekeeper.msm8226
 
 # GPS
 PRODUCT_PACKAGES += \
