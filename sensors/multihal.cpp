@@ -610,6 +610,8 @@ static void lazy_init_modules() {
  * reported by the wrapper.
  */
 static void fix_sensor_flags(int version, sensor_t& sensor) {
+    ALOGI("Displaying sensors name=%s, handle info=%i, type=%i , flags=%i",
+                sensor.name, sensor.handle, sensor.type, sensor.flags);
     if (version < SENSORS_DEVICE_API_VERSION_1_3) {
         if (sensor.type == SENSOR_TYPE_PROXIMITY ||
                 sensor.type == SENSOR_TYPE_TILT_DETECTOR) {
