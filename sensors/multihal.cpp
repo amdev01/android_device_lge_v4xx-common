@@ -612,13 +612,41 @@ static void lazy_init_modules() {
 static void fix_sensor_flags(int version, sensor_t& sensor) {
     ALOGI("Displaying sensors name=%s, handle info=%i, type=%i , flags=%i",
                 sensor.name, sensor.handle, sensor.type, sensor.flags);
-    if (version < SENSORS_DEVICE_API_VERSION_1_3) {
-        if (sensor.type == SENSOR_TYPE_PROXIMITY ||
-                sensor.type == SENSOR_TYPE_TILT_DETECTOR) {
-            int new_flags = SENSOR_FLAG_WAKE_UP | SENSOR_FLAG_ON_CHANGE_MODE;
-            ALOGV("Changing flags of handle=%d from %x to %x",
-                    sensor.handle, sensor.flags, new_flags);
-            sensor.flags = new_flags;
+        if (version < SENSORS_DEVICE_API_VERSION_1_3) {
+        switch(sensor.type) {
+            case SENSOR_TYPE_PROXIMITY:
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                    sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_WAKE_UP | SENSOR_FLAG_ON_CHANGE_MODE;
+            case SENSOR_TYPE_TILT_DETECTOR:
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                    sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_WAKE_UP | SENSOR_FLAG_ON_CHANGE_MODE;
+                break;
+            case SENSOR_TYPE_STEP_DETECTOR:
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                        sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE;
+                break;
+            case SENSOR_TYPE_STEP_COUNTER:
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                        sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_ON_CHANGE_MODE;
+                break;
+            case SENSOR_TYPE_SIGNIFICANT_MOTION:
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                        sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP;;
+                break;
+            case SENSOR_TYPE_PICK_UP_GESTURE: // LGE Tap To Wake
+                ALOGV("Changing flags of handle=%d from %x, sensor name %s",
+                        sensor.handle, sensor.flags, sensor.name);
+                sensor.flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP;
+                break;
+            default:
+                ALOGV("Unknown sensor %s handle: %d type: %d flag: %d", 
+                        sensor.name, sensor.handle, sensor.type, sensor.flags);
+                break;
         }
     }
 }
