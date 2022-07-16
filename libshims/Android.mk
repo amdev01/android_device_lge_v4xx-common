@@ -25,7 +25,6 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-    icu53.cpp \
     libqc-opt_shim.c
 
 LOCAL_SHARED_LIBRARIES := liblog
