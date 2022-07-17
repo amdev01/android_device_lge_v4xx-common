@@ -140,13 +140,16 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Gatekeeper HAL
 PRODUCT_PACKAGES += \
-    android.hardware.gatekeeper@1.0-impl \
-    android.hardware.gatekeeper@1.0-service
+    android.hardware.gatekeeper@1.0-impl
 
 # GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
     gps.msm8226
+
+# Healthd
+PRODUCT_PACKAGES += \
+    android.hardware.health@1.0-impl
 
 # IPv6 tethering
 PRODUCT_PACKAGES += \
@@ -269,6 +272,10 @@ PRODUCT_PACKAGES += \
 # Vibrator
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl
+
+# Thermal
+PRODUCT_PACKAGES += \
+    android.hardware.thermal@1.0-impl
 
 # Wifi
 PRODUCT_PACKAGES += \

@@ -88,7 +88,8 @@ TARGET_USE_COMPAT_GRALLOC_PERFORM := true
 EXTENDED_FONT_FOOTPRINT := true
 
 # HIDL
-DEVICE_MANIFEST_FILE := device/lge/v4xx-common/configs/manifest.xml
+DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/configs/manifest.xml
+DEVICE_MATRIX_FILE := $(LOCAL_PATH)/configs/compatibility_matrix.xml
 TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 
 # Lights
