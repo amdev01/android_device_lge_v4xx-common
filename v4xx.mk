@@ -220,8 +220,7 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-service-qti \
-    libshim_qcopt
+    android.hardware.power@1.0-service-qti
 
 # Qualcomm
 PRODUCT_PACKAGES += \
