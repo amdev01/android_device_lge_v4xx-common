@@ -70,6 +70,7 @@ BOARD_GLOBAL_CFLAGS += -DCAMERA_VENDOR_L_COMPAT
 
 # LINEAGEHW
 BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/lineagehw/
+TARGET_TAP_TO_WAKE_NODE := "/sys/devices/virtual/input/lge_touch/tap_to_wake"
 
 # Display
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
@@ -111,10 +112,7 @@ BOARD_FLASH_BLOCK_SIZE := 131072
 TARGET_USERIMAGES_USE_F2FS := true
 
 # Power
-TARGET_TAP_TO_WAKE_NODE := "/sys/devices/virtual/input/lge_touch/tap_to_wake"
-TARGET_HAS_LEGACY_POWER_STATS := true
-TARGET_HAS_NO_WIFI_STATS := true
-TARGET_USES_INTERACTION_BOOST := true
+TARGET_POWERHAL_VARIANT := qcom
 
 # Qualcomm support
 BOARD_USES_QCOM_HARDWARE := true
@@ -148,7 +146,8 @@ TARGET_LD_SHIM_LIBS := /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat
         /system/vendor/lib/libOpenCL.so|libboringssl-compat.so \
         /system/lib/libcamera_client.so|libcamera_parameters_shim.so \
         /system/lib/hw/camera.vendor.msm8226.so|libshim_atomic.so \
-        /system/bin/mpdecision|libshim_atomic.so
+        /system/bin/mpdecision|libshim_atomic.so \
+        /system/vendor/lib/libqc-opt.so|libshim_qcopt.so
 
 # Shipping API level (for CTS backward compatibility)
 PRODUCT_SHIPPING_API_LEVEL := 19
