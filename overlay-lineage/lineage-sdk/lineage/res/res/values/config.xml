@@ -45,6 +45,10 @@
          config to 7. -->
     <integer name="config_deviceHardwareWakeKeys">64</integer>
 
+    <!-- Disable livedisplay -->
+    <integer name="config_defaultLiveDisplayMode">0</integer>
+    <bool name="config_enableLiveDisplay">false</bool>
+
     <!-- Defines the actions shown in advanced reboot submenu -->
     <string-array name="config_restartActionsList">
         <item>restart</item>
