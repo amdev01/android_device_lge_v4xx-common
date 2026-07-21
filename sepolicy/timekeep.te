@@ -7,15 +7,14 @@ init_daemon_domain(timekeep)
 allow timekeep self:capability { dac_override fowner fsetid sys_time };
 allow timekeep rtc_sysfs:dir search;
 allow timekeep rtc_sysfs:file r_file_perms;
-allow timekeep time_data_file:file rw_file_perms;
 allow timekeep timekeep_prop:file r_file_perms;
-# Allow the low-level timekeep binary to read/write/modify time_data_file
-allow timekeep time_data_file dir { search read open write add_name };
-allow timekeep time_data_file file { read write open create getattr setattr };
+# Allow the low-level timekeep binary to read/write/create under /persist/time
+allow timekeep time_data_file:dir rw_dir_perms;
+allow timekeep time_data_file:file create_file_perms;
 
 allow system_app rtc_sysfs:dir search;
 allow system_app rtc_sysfs:file r_file_perms;
 allow system_app timekeep_prop:file r_file_perms;
-# Allow the Sony Timekeep system application to read/write/modify time_data_file
-allow system_app time_data_file dir { search read open write add_name };
-allow system_app time_data_file file { read write open create getattr setattr }; 
+# Allow the Sony Timekeep system application to read/write/create under /persist/time
+allow system_app time_data_file:dir rw_dir_perms;
+allow system_app time_data_file:file create_file_perms;
