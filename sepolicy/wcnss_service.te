@@ -1,5 +1,13 @@
 allow wcnss_service self:capability { chown fowner };
 
 allow wcnss_service block_device:dir search;
-allow wcnss_service misc_block_device:blk_file r_file_perms;
-#allow wcnss_service mmc_block_device:dir search;
+allow wcnss_service wcnss_block_device:blk_file r_file_perms;
+
+# misc was relabeled away from misc_block_device so user builds can allow
+# wcnss_service to read the WLAN MAC. Preserve BCB/OTA access for the
+# domains that system/sepolicy normally grants on misc_block_device.
+allow init wcnss_block_device:blk_file rw_file_perms;
+allow uncrypt wcnss_block_device:blk_file rw_file_perms;
+allow vold wcnss_block_device:blk_file rw_file_perms;
+allow recovery wcnss_block_device:blk_file rw_file_perms;
+allow update_engine wcnss_block_device:blk_file rw_file_perms;

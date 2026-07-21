@@ -133,6 +133,10 @@ TARGET_USE_SDCLANG := true
 
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
+# msm8226/file_contexts labels misc as misc_block_device, which conflicts with
+# our wcnss_block_device label required for user builds. Drop that chipset dir
+# (it only contains file_contexts) and carry those labels in our sepolicy/.
+BOARD_SEPOLICY_DIRS := $(filter-out device/qcom/sepolicy/$(TARGET_BOARD_PLATFORM),$(BOARD_SEPOLICY_DIRS))
 BOARD_SEPOLICY_DIRS += device/lge/v4xx-common/sepolicy
 
 # Time services

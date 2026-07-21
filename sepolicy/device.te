@@ -1,1 +1,5 @@
 type modem_block_device, dev_type;
+# misc partition holds both WLAN MAC data (wcnss) and the bootloader
+# control block. system/sepolicy neverallows non-OTA domains from using
+# misc_block_device on user builds, so use a device-specific label instead.
+type wcnss_block_device, dev_type;
