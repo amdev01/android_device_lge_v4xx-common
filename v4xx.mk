@@ -46,6 +46,13 @@ PRODUCT_COPY_FILES += \
 -include $(LOCAL_PATH)/system_prop.mk
 PRODUCT_CHARACTERISTICS := tablet
 
+# Alarm-safe wall-clock offset store/restore (replaces Sony TimeKeep).
+# Restores via /dev/alarm ANDROID_ALARM_SET_RTC; stores ats_2 for TWRP
+# TARGET_RECOVERY_QCOM_RTC_FIX. Do NOT use raw settimeofday restore.
+PRODUCT_PACKAGES += \
+    timepersist \
+    TimePersist
+
 # Screen density
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi

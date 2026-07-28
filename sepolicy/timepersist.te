@@ -1,0 +1,21 @@
+type timepersist, domain;
+type timepersist_exec, exec_type, file_type;
+
+# Started by init as oneshot restore
+init_daemon_domain(timepersist)
+
+allow timepersist self:capability { dac_override fowner fsetid sys_time };
+allow timepersist rtc_sysfs:dir search;
+allow timepersist rtc_sysfs:file r_file_perms;
+allow timepersist timekeep_prop:file r_file_perms;
+# Offset files for Android restore + TWRP QCOM RTC fix
+allow timepersist time_data_file:dir { create search write add_name getattr };
+allow timepersist time_data_file:file create_file_perms;
+# Critical: ANDROID_ALARM_SET_RTC updates ELAPSED delta (unlike settimeofday)
+allow timepersist alarm_device:chr_file rw_file_perms;
+
+allow system_app rtc_sysfs:dir search;
+allow system_app rtc_sysfs:file r_file_perms;
+allow system_app timekeep_prop:file r_file_perms;
+allow system_app time_data_file:dir { create search write add_name getattr };
+allow system_app time_data_file:file create_file_perms;

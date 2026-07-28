@@ -140,7 +140,19 @@ BOARD_SEPOLICY_DIRS := $(filter-out device/qcom/sepolicy/$(TARGET_BOARD_PLATFORM
 BOARD_SEPOLICY_DIRS += device/lge/v4xx-common/sepolicy
 
 # Time services
-# TODO (needs libtime_genoff)
+# Hardware qpnp RTC is not software-writable on this PMIC (SPMI write fails
+# with EPERM even with qcom,qpnp-rtc-write=1). Stock approach is offset files.
+#
+# libtime_genoff.so (~5KB) is present but is only a socket client for missing
+# time_daemon / TimeService — do NOT enable BOARD_USES_QC_TIME_SERVICES.
+#
+# Sony TimeKeep was removed: its restore used raw settimeofday and left
+# /dev/alarm ELAPSED_REALTIME stale (issues 001/003).
+#
+# Replacement: device/lge/v4xx-common/timepersist — stores ats_2 +
+# persist.sys.timeadjust; restores via ANDROID_ALARM_SET_RTC (updates alarm
+# delta). TWRP uses TARGET_RECOVERY_QCOM_RTC_FIX to read ats_2 (no restore
+# service in recovery).
 # BOARD_USES_QC_TIME_SERVICES := true
 
 # Wifi

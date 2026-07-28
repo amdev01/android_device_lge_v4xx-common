@@ -1,1 +1,2 @@
+# TimePersist (org.lineageos.timepersist) stores wall-RTC offset
 allow system_app timekeep_prop:property_service set;

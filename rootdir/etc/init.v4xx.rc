@@ -30,6 +30,8 @@ on fs
 on post-fs-data
     mkdir /data/tombstones 0771 system system
     mkdir /tombstones/modem 0771 system system
+    # Offset files for timepersist + TWRP QCOM RTC fix
+    mkdir /data/time 0771 system system
 
     chown system system /sys/class/timed_output/vibrator/vtg_level
     chown system system /sys/class/timed_output/vibrator/vtg_max
@@ -39,6 +41,9 @@ on post-fs-data
     chmod 0644 /sys/class/timed_output/vibrator/vtg_min
 
     setprop vold.post_fs_data_done 1
+
+on early-boot
+    start timepersist
 
 on boot
    chown media media /sys/bus/platform/devices/cam_sensor_vt/antibanding
@@ -87,6 +92,13 @@ on property:init.svc.media=restarting
 
 on property:init.svc.servicemanager=restarting
     restart qcamerasvr
+
+service timepersist /system/bin/timepersist restore
+   user root
+   group root
+   disabled
+   oneshot
+   seclabel u:r:timepersist:s0
 
 service mpdecision /system/bin/mpdecision --avg_comp
    class late_start

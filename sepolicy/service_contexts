@@ -1,1 +1,1 @@
-com.sony.timekeep u:object_r:timekeep_service:s0
+org.lineageos.timepersist u:object_r:timepersist_service:s0
