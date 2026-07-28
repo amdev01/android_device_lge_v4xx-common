@@ -33,5 +33,7 @@
 /sys/devices/qpnp-rtc-[^/]+/rtc/rtc0(/.*)?        u:object_r:rtc_sysfs:s0
 /sys/devices/virtual/timed_output/vibrator/vtg_level     u:object_r:vibeamp_sysfs:s0
 
+/dev/msm_IRRC_pcm_dec                             u:object_r:irrc_device:s0
+
 /system/bin/thermal-engine                        u:object_r:thermal-engine_exec:s0
 /system/bin/timepersist                           u:object_r:timepersist_exec:s0

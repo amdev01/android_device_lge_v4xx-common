@@ -3,3 +3,5 @@ type modem_block_device, dev_type;
 # control block. system/sepolicy neverallows non-OTA domains from using
 # misc_block_device on user builds, so use a device-specific label instead.
 type wcnss_block_device, dev_type;
+# LG SwIRRC misc character device (/dev/msm_IRRC_pcm_dec)
+type irrc_device, dev_type;

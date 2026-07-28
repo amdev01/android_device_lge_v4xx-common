@@ -2,3 +2,5 @@ type drm_block_device, dev_type;
 type rtc_sysfs, sysfs_type, file_type;
 type sns_block_device, dev_type;
 type vibeamp_sysfs, sysfs_type, file_type;
+# LG SwIRRC debugfs (/sys/kernel/debug/sw_irrc)
+type sw_irrc_debugfs, fs_type, debugfs_type;

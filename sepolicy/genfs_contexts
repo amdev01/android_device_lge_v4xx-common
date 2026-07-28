@@ -1,0 +1,2 @@
+# LG SwIRRC debugfs poke node (issue 010)
+genfscon debugfs /sw_irrc u:object_r:sw_irrc_debugfs:s0

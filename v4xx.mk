@@ -145,6 +145,15 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     lights.msm8226
 
+# Consumer IR (LG SwIRRC — legacy HAL, not HIDL)
+# DTS has lge_sw_irrc on all four (V400/V410/V480/V490); feature XML ships in common.
+# Gate per-device only if HITL finds a model without the emitter (see issue 009 matrix).
+PRODUCT_PACKAGES += \
+    consumerir.msm8226
+
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.consumerir.xml:system/etc/permissions/android.hardware.consumerir.xml
+
 # Media
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml

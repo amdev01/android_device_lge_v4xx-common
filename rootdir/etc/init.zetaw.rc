@@ -173,8 +173,8 @@ on boot
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
 
-# byungil.choi@lge.com for SW IrRC
-    chown media media /dev/msm_IRRC_pcm_dec
+# byungil.choi@lge.com for SW IrRC — ConsumerIr HAL runs as system_server
+    chown system system /dev/msm_IRRC_pcm_dec
     chmod 0660 /dev/msm_IRRC_pcm_dec
 
     trigger enable-low-power

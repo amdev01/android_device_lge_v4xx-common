@@ -1,0 +1,7 @@
+# LG SwIRRC — ConsumerIrService (system_server) talks to misc + debugfs poke.
+# Unlike msm8226-common 2d93079 (irrcServer + QuickRemote blobs), this tree uses
+# the legacy consumerir HAL in-process; no separate irrc domain or binder service.
+
+allow system_server irrc_device:chr_file rw_file_perms;
+allow system_server sw_irrc_debugfs:dir r_dir_perms;
+allow system_server sw_irrc_debugfs:file rw_file_perms;

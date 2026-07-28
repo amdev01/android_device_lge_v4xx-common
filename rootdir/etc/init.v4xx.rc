@@ -49,6 +49,13 @@ on boot
    chown media media /sys/bus/platform/devices/cam_sensor_vt/antibanding
    chmod 644 /sys/bus/platform/devices/cam_sensor_vt/antibanding
 
+   # LG SwIRRC — legacy consumerir HAL (issue 010)
+   # Misc device is also chmod'd in init.zetaw.rc; poke is debugfs (driver probe).
+   chown system system /dev/msm_IRRC_pcm_dec
+   chmod 0660 /dev/msm_IRRC_pcm_dec
+   chown system system /sys/kernel/debug/sw_irrc/poke
+   chmod 0660 /sys/kernel/debug/sw_irrc/poke
+
    # Touch
    chmod 664 /sys/devices/virtual/input/lge_touch/touch_gesture
    chown system system /sys/devices/virtual/input/lge_touch/touch_gesture

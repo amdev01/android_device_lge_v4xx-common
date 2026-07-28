@@ -1,1 +1,6 @@
 allow init debugfs:dir mounton;
+
+# LG SwIRRC — chmod/chown poke + misc from init.*.rc
+allow init irrc_device:chr_file { getattr setattr };
+allow init sw_irrc_debugfs:dir search;
+allow init sw_irrc_debugfs:file { getattr setattr };
