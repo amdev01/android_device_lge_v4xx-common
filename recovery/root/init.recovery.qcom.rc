@@ -60,14 +60,3 @@ on property:recovery.perf.mode=1
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor performance
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor performance
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor performance
-
-service timekeep /system/bin/timekeep restore
-    user root
-    group root
-    oneshot
-    disabled
-    seclabel u:r:recovery:s0
-
-on boot
-    # Ensure persist is mounted before running this
-    start timekeep
