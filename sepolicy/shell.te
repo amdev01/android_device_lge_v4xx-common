@@ -1,0 +1,4 @@
+# Allow unprivileged adb shell to verify RTC sysfs after flash (user builds
+# cannot adb root).
+allow shell rtc_sysfs:dir search;
+allow shell rtc_sysfs:file r_file_perms;
