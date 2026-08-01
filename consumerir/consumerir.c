@@ -16,12 +16,15 @@
  *
  * Legacy consumerir HAL for LG SwIRRC (android_irrc.c).
  *
- * Transmission prefers /dev/msm_IRRC_pcm_dec ioctls (IRRC_START/STOP).
- * Falls back to debugfs poke: echo <enable> <freqKHz> <duty> >
- *   /sys/kernel/debug/sw_irrc/poke
+ * Prefer IRRC_TRANSMIT: kernel plays the full mark/space pattern with a
+ * busy-wait (usleep is insufficient due to timer slack for sub-ms NEC/LG
+ * patterns). Falls back to IRRC_START/STOP + userspace busy-wait on older
+ * kernels, then to debugfs poke:
+ *   echo <enable> <freqKHz> <duty> > /sys/kernel/debug/sw_irrc/poke
  *
- * Kernel IRRC_STOP / poke-off must disable immediately (cakekernel uses
- * msecs_to_jiffies(0); stock was 1500 ms and broke mark/space patterns).
+ * Kernel IRRC_STOP / poke-off gates carrier immediately (ROOT_EN clear);
+ * cakekernel fully disarms clk/rails after 100 ms idle. Stock used a 1500 ms
+ * delayed STOP and broke mark/space patterns.
  */
 
 #define LOG_TAG "ConsumerIrHal"
@@ -31,9 +34,11 @@
 #include <malloc.h>
 #include <pthread.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/prctl.h>
 
 #include <cutils/log.h>
 #include <hardware/hardware.h>
@@ -57,6 +62,15 @@ struct irrc_compr_params {
     int length;
 };
 
+struct irrc_transmit_params {
+    int frequency; /* Hz */
+    int duty;
+    int count;
+    const int *pattern; /* userspace pointer; kernel copies */
+};
+
+#define IRRC_TRANSMIT _IOW(IRRC_IOCTL_MAGIC, 2, struct irrc_transmit_params)
+
 /*
  * Driver accepts PWM_CLK in kHz for 23..1200; consumer IR is ~20-60 kHz.
  * Report the practical consumer range that fits the driver's checks.
@@ -66,6 +80,25 @@ static const consumerir_freq_range_t consumerir_freqs[] = {
 };
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
+
+static void busy_wait_us(int usec)
+{
+    struct timespec start, now;
+    long long elapsed_ns;
+    long long target_ns;
+
+    if (usec <= 0) {
+        return;
+    }
+
+    target_ns = (long long)usec * 1000LL;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    do {
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        elapsed_ns = (long long)(now.tv_sec - start.tv_sec) * 1000000000LL
+                + (long long)(now.tv_nsec - start.tv_nsec);
+    } while (elapsed_ns < target_ns);
+}
 
 static int irrc_poke_write(int enable, int freq_khz, int duty)
 {
@@ -161,6 +194,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
     int i;
     int rc = 0;
     int fd = -1;
+    struct irrc_transmit_params tx;
 
     if (pattern == NULL || pattern_len <= 0) {
         return -EINVAL;
@@ -168,12 +202,38 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
 
     ALOGD("transmit %d entries at %d Hz", pattern_len, carrier_freq);
 
+#ifdef PR_SET_TIMERSLACK
+    /* Tighten timer slack before any userspace busy-wait fallback. */
+    prctl(PR_SET_TIMERSLACK, 1L);
+#endif
+
     pthread_mutex_lock(&g_lock);
 
     fd = open(IRRC_DEVICE, O_RDWR);
     if (fd < 0) {
         ALOGW("open %s failed (%s); using poke fallback",
                 IRRC_DEVICE, strerror(errno));
+    }
+
+    if (fd >= 0) {
+        memset(&tx, 0, sizeof(tx));
+        tx.frequency = carrier_freq;
+        tx.duty = IRRC_DUTY_PERCENT;
+        tx.count = pattern_len;
+        tx.pattern = pattern;
+
+        rc = ioctl(fd, IRRC_TRANSMIT, &tx);
+        if (rc == 0) {
+            ALOGD("IRRC_TRANSMIT ok (%d entries @ %d Hz)",
+                    pattern_len, carrier_freq);
+            close(fd);
+            pthread_mutex_unlock(&g_lock);
+            return 0;
+        }
+
+        ALOGD("IRRC_TRANSMIT unavailable (%s); falling back to START/STOP",
+                strerror(errno));
+        rc = 0;
     }
 
     for (i = 0; i < pattern_len; i++) {
@@ -193,7 +253,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
         }
 
         if (pattern[i] > 0) {
-            usleep((useconds_t)pattern[i]);
+            busy_wait_us(pattern[i]);
         }
     }
 
