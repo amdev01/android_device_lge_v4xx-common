@@ -200,7 +200,19 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
         return -EINVAL;
     }
 
-    ALOGD("transmit %d entries at %d Hz", pattern_len, carrier_freq);
+    {
+        char preview[128];
+        int n = 0;
+        int lim = pattern_len < 12 ? pattern_len : 12;
+        int j;
+
+        n += snprintf(preview + n, sizeof(preview) - n, "pattern:");
+        for (j = 0; j < lim && n < (int)sizeof(preview) - 1; j++) {
+            n += snprintf(preview + n, sizeof(preview) - n, " %d", pattern[j]);
+        }
+        ALOGI("transmit %d entries at %d Hz; %s",
+                pattern_len, carrier_freq, preview);
+    }
 
 #ifdef PR_SET_TIMERSLACK
     /* Tighten timer slack before any userspace busy-wait fallback. */
