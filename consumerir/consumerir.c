@@ -22,6 +22,11 @@
  * kernels, then to debugfs poke:
  *   echo <enable> <freqKHz> <duty> > /sys/kernel/debug/sw_irrc/poke
  *
+ * Stock QuickRemote dual-drives IR: PWM carrier (IRRC_START) + AudioTrack EWG
+ * on LINEOUT1 (mixer path lg-irrc-lineout / MultiMedia2). This HAL best-effort
+ * enables the same mixer controls and streams a DC envelope on MultiMedia2
+ * while the kernel transmits. Failures are logged; PWM still proceeds.
+ *
  * Kernel IRRC_STOP / poke-off gates carrier immediately (ROOT_EN clear);
  * cakekernel fully disarms clk/rails after 100 ms idle. Stock used a 1500 ms
  * delayed STOP and broke mark/space patterns.
@@ -37,12 +42,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/prctl.h>
 
 #include <cutils/log.h>
 #include <hardware/hardware.h>
 #include <hardware/consumerir.h>
+#include <tinyalsa/asoundlib.h>
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
@@ -55,6 +62,14 @@
 
 /* Duty cycle accepted by android_irrc_enable_pwm (20..60). */
 #define IRRC_DUTY_PERCENT 50
+
+/* msm8226: MultiMedia2 is PCM device 1 (see USECASE_AUDIO_PLAYBACK_MULTI_CH). */
+#define IRRC_SND_CARD     0
+#define IRRC_PCM_DEVICE   1
+#define IRRC_PCM_RATE     48000
+#define IRRC_PCM_CHANNELS 1
+#define IRRC_PCM_PERIOD_SIZE  1024
+#define IRRC_PCM_PERIOD_COUNT 4
 
 struct irrc_compr_params {
     int frequency; /* Hz */
@@ -81,6 +96,43 @@ static const consumerir_freq_range_t consumerir_freqs[] = {
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 
+/* Best-effort LINEOUT envelope (stock lg-irrc-lineout + MultiMedia2). */
+struct irrc_lineout_state {
+    struct mixer *mixer;
+    struct pcm *pcm;
+    pthread_t thread;
+    int thread_running;
+    volatile int run;
+    int16_t *buf;
+    size_t buf_bytes;
+};
+
+struct irrc_mixer_ctl {
+    const char *name;
+    int is_enum;
+    const char *enum_value; /* when is_enum */
+    int int_value;          /* when !is_enum */
+};
+
+/* Matches configs/mixer_paths.xml paths lg-irrc-playback + lg-irrc-lineout. */
+static const struct irrc_mixer_ctl irrc_lineout_on[] = {
+    { "SLIMBUS_0_RX Audio Mixer MultiMedia2", 0, NULL, 1 },
+    { "SLIM RX1 MUX", 1, "AIF1_PB", 0 },
+    { "SLIM_0_RX Channels", 1, "One", 0 },
+    { "RX3 MIX1 INP1", 1, "RX1", 0 },
+    { "RX3 Digital Volume", 0, NULL, 88 },
+    { "LINEOUT1 Volume", 0, NULL, 20 },
+    { "SPK DAC Switch", 0, NULL, 0 },
+};
+
+static const struct irrc_mixer_ctl irrc_lineout_off[] = {
+    { "SLIMBUS_0_RX Audio Mixer MultiMedia2", 0, NULL, 0 },
+    { "LINEOUT1 Volume", 0, NULL, 14 },
+    { "RX3 Digital Volume", 0, NULL, 84 },
+    { "RX3 MIX1 INP1", 1, "ZERO", 0 },
+    { "SLIM RX1 MUX", 1, "ZERO", 0 },
+};
+
 static void busy_wait_us(int usec)
 {
     struct timespec start, now;
@@ -98,6 +150,156 @@ static void busy_wait_us(int usec)
         elapsed_ns = (long long)(now.tv_sec - start.tv_sec) * 1000000000LL
                 + (long long)(now.tv_nsec - start.tv_nsec);
     } while (elapsed_ns < target_ns);
+}
+
+static int irrc_mixer_apply(struct mixer *mixer, const struct irrc_mixer_ctl *ctls,
+        size_t n)
+{
+    size_t i;
+    int applied = 0;
+
+    if (!mixer) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        struct mixer_ctl *ctl = mixer_get_ctl_by_name(mixer, ctls[i].name);
+        int rc;
+
+        if (!ctl) {
+            ALOGV("mixer ctl missing: %s", ctls[i].name);
+            continue;
+        }
+        if (ctls[i].is_enum) {
+            rc = mixer_ctl_set_enum_by_string(ctl, ctls[i].enum_value);
+        } else {
+            rc = mixer_ctl_set_value(ctl, 0, ctls[i].int_value);
+        }
+        if (rc != 0) {
+            ALOGW("mixer set %s failed (%d)", ctls[i].name, rc);
+        } else {
+            applied++;
+        }
+    }
+    return applied;
+}
+
+static void *irrc_lineout_feed(void *arg)
+{
+    struct irrc_lineout_state *st = arg;
+
+    prctl(PR_SET_NAME, "irrc-lineout", 0, 0, 0);
+    while (st->run && st->pcm) {
+        if (pcm_write(st->pcm, st->buf, st->buf_bytes) != 0) {
+            ALOGW("irrc LINEOUT pcm_write: %s", pcm_get_error(st->pcm));
+            break;
+        }
+    }
+    return NULL;
+}
+
+/*
+ * Stock QuickRemote: enable lg-irrc-lineout and play an envelope on MultiMedia2
+ * while PWM carrier runs. Best-effort — SELinux / busy card must not block IR.
+ */
+static int irrc_lineout_start(struct irrc_lineout_state *st)
+{
+    struct pcm_config config;
+    unsigned int i;
+    int applied;
+
+    memset(st, 0, sizeof(*st));
+
+    st->mixer = mixer_open(IRRC_SND_CARD);
+    if (!st->mixer) {
+        ALOGW("irrc LINEOUT: mixer_open(%d) failed — PWM-only", IRRC_SND_CARD);
+        return -ENODEV;
+    }
+
+    applied = irrc_mixer_apply(st->mixer, irrc_lineout_on,
+            ARRAY_SIZE(irrc_lineout_on));
+    if (applied == 0) {
+        ALOGW("irrc LINEOUT: no mixer ctls applied — PWM-only");
+        mixer_close(st->mixer);
+        st->mixer = NULL;
+        return -ENOENT;
+    }
+
+    memset(&config, 0, sizeof(config));
+    config.channels = IRRC_PCM_CHANNELS;
+    config.rate = IRRC_PCM_RATE;
+    config.period_size = IRRC_PCM_PERIOD_SIZE;
+    config.period_count = IRRC_PCM_PERIOD_COUNT;
+    config.format = PCM_FORMAT_S16_LE;
+    config.start_threshold = IRRC_PCM_PERIOD_SIZE;
+    config.stop_threshold = IRRC_PCM_PERIOD_SIZE * IRRC_PCM_PERIOD_COUNT;
+    config.silence_threshold = 0;
+
+    st->pcm = pcm_open(IRRC_SND_CARD, IRRC_PCM_DEVICE, PCM_OUT, &config);
+    if (!st->pcm || !pcm_is_ready(st->pcm)) {
+        ALOGW("irrc LINEOUT: pcm_open(card=%d,dev=%d) failed (%s) — mixer only",
+                IRRC_SND_CARD, IRRC_PCM_DEVICE,
+                st->pcm ? pcm_get_error(st->pcm) : "null");
+        if (st->pcm) {
+            pcm_close(st->pcm);
+            st->pcm = NULL;
+        }
+        /* Mixer path alone can bias LINEOUT amp on some boards. */
+        return 0;
+    }
+
+    st->buf_bytes = pcm_frames_to_bytes(st->pcm, IRRC_PCM_PERIOD_SIZE);
+    st->buf = malloc(st->buf_bytes);
+    if (!st->buf) {
+        pcm_close(st->pcm);
+        st->pcm = NULL;
+        return 0;
+    }
+
+    /* DC high ≈ stock EWG envelope (full-scale S16). */
+    for (i = 0; i < st->buf_bytes / sizeof(int16_t); i++) {
+        st->buf[i] = 0x7fff;
+    }
+
+    st->run = 1;
+    if (pthread_create(&st->thread, NULL, irrc_lineout_feed, st) != 0) {
+        ALOGW("irrc LINEOUT: feed thread failed");
+        st->run = 0;
+        free(st->buf);
+        st->buf = NULL;
+        pcm_close(st->pcm);
+        st->pcm = NULL;
+        return 0;
+    }
+    st->thread_running = 1;
+    ALOGI("irrc LINEOUT: MultiMedia2 envelope on (mixer+%d ctls)", applied);
+    return 0;
+}
+
+static void irrc_lineout_stop(struct irrc_lineout_state *st)
+{
+    if (!st) {
+        return;
+    }
+
+    if (st->thread_running) {
+        st->run = 0;
+        pthread_join(st->thread, NULL);
+        st->thread_running = 0;
+    }
+    if (st->pcm) {
+        pcm_close(st->pcm);
+        st->pcm = NULL;
+    }
+    free(st->buf);
+    st->buf = NULL;
+
+    if (st->mixer) {
+        irrc_mixer_apply(st->mixer, irrc_lineout_off,
+                ARRAY_SIZE(irrc_lineout_off));
+        mixer_close(st->mixer);
+        st->mixer = NULL;
+    }
 }
 
 static int irrc_poke_write(int enable, int freq_khz, int duty)
@@ -195,6 +397,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
     int rc = 0;
     int fd = -1;
     struct irrc_transmit_params tx;
+    struct irrc_lineout_state lineout;
 
     if (pattern == NULL || pattern_len <= 0) {
         return -EINVAL;
@@ -221,6 +424,9 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
 
     pthread_mutex_lock(&g_lock);
 
+    /* Stock dual path: LINEOUT envelope while PWM/carrier runs. */
+    (void)irrc_lineout_start(&lineout);
+
     fd = open(IRRC_DEVICE, O_RDWR);
     if (fd < 0) {
         ALOGW("open %s failed (%s); using poke fallback",
@@ -239,6 +445,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
             ALOGD("IRRC_TRANSMIT ok (%d entries @ %d Hz)",
                     pattern_len, carrier_freq);
             close(fd);
+            irrc_lineout_stop(&lineout);
             pthread_mutex_unlock(&g_lock);
             return 0;
         }
@@ -276,6 +483,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
         close(fd);
     }
 
+    irrc_lineout_stop(&lineout);
     pthread_mutex_unlock(&g_lock);
     return rc;
 }
