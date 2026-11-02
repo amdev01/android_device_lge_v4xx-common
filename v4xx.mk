@@ -198,10 +198,6 @@ PRODUCT_PACKAGES += \
     librmnetctl \
     libxml2
 
-# Radio
-PRODUCT_PACKAGES += \
-    libxml2
-
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.v4xx \
@@ -212,7 +208,6 @@ PRODUCT_PACKAGES += \
     init.zetaw-sensor.sh \
     init.zetaw.rc \
     init.zetaw.sh \
-    init.zetaw.syspart_fixup.sh \
     init.zetaw.usb.rc \
     init.zetaw.usb.sh \
     ueventd.v4xx.rc
