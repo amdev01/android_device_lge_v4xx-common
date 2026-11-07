@@ -114,13 +114,18 @@ struct irrc_mixer_ctl {
     int int_value;          /* when !is_enum */
 };
 
-/* Matches configs/mixer_paths.xml paths lg-irrc-playback + lg-irrc-lineout. */
+/*
+ * Matches configs/mixer_paths.xml lg-irrc-playback + lg-irrc-lineout.
+ * RDAC4→DEM3 is required so LINEOUT1 DAC sees RX3 (HITL 2026-08-02: poke
+ * alone is dark; MultiMedia2 DC + GPIO/PWM lights the LED on camera).
+ */
 static const struct irrc_mixer_ctl irrc_lineout_on[] = {
     { "SLIMBUS_0_RX Audio Mixer MultiMedia2", 0, NULL, 1 },
     { "SLIM RX1 MUX", 1, "AIF1_PB", 0 },
     { "SLIM_0_RX Channels", 1, "One", 0 },
     { "RX3 MIX1 INP1", 1, "RX1", 0 },
     { "RX3 Digital Volume", 0, NULL, 88 },
+    { "RDAC4 MUX", 1, "DEM3", 0 },
     { "LINEOUT1 Volume", 0, NULL, 20 },
     { "SPK DAC Switch", 0, NULL, 0 },
 };
@@ -272,6 +277,11 @@ static int irrc_lineout_start(struct irrc_lineout_state *st)
         return 0;
     }
     st->thread_running = 1;
+    /*
+     * Let the first period reach the codec / LINEOUT PA before PWM marks.
+     * Without this, short NEC frames can finish while DAPM is still Off.
+     */
+    usleep(40000);
     ALOGI("irrc LINEOUT: MultiMedia2 envelope on (mixer+%d ctls)", applied);
     return 0;
 }
@@ -390,6 +400,65 @@ static int irrc_carrier_off(int fd, int carrier_hz)
     return irrc_poke_write(0, freq_khz, IRRC_DUTY_PERCENT);
 }
 
+/*
+ * Some apps (notably us.spotco.ir_remote) hand Pronto *carrier-cycle* counts
+ * to ConsumerIrManager, which documents microseconds. At ~38 kHz that makes
+ * frames ~26× too short (headers look like 170/342 instead of 4500/9000).
+ *
+ * Detect Pronto-scale patterns and convert: us = cycles * 1e6 / freq.
+ */
+static int irrc_pattern_looks_pronto_cycles(int carrier_freq,
+        const int pattern[], int pattern_len)
+{
+    int i;
+    int max = 0;
+    int header;
+
+    if (carrier_freq < 20000 || pattern_len < 8) {
+        return 0;
+    }
+
+    for (i = 0; i < pattern_len; i++) {
+        if (pattern[i] < 0) {
+            return 0;
+        }
+        if (pattern[i] > max) {
+            max = pattern[i];
+        }
+    }
+
+    /* Real NEC/Samsung µs frames have headers >= ~4000. Pronto stays < ~1000. */
+    if (max >= 1000) {
+        return 0;
+    }
+
+    header = pattern[0];
+    /* Classic Pronto headers at 38 kHz: NEC≈342, Samsung NECx≈170–171. */
+    if (header >= 150 && header <= 400) {
+        return 1;
+    }
+
+    /* Fallback: dense short pattern with tiny bit times (e.g. 21). */
+    return (max < 500 && pattern_len >= 48);
+}
+
+static int irrc_convert_pronto_to_us(int carrier_freq, const int *in,
+        int *out, int n)
+{
+    int i;
+
+    if (carrier_freq <= 0) {
+        return -EINVAL;
+    }
+
+    for (i = 0; i < n; i++) {
+        /* Round nearest: (cycles * 1e6 + freq/2) / freq */
+        out[i] = (int)(((long long)in[i] * 1000000LL
+                + carrier_freq / 2) / carrier_freq);
+    }
+    return 0;
+}
+
 static int consumerir_transmit(struct consumerir_device *dev __unused,
         int carrier_freq, const int pattern[], int pattern_len)
 {
@@ -398,9 +467,28 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
     int fd = -1;
     struct irrc_transmit_params tx;
     struct irrc_lineout_state lineout;
+    int *pattern_us = NULL;
+    const int *xmit_pattern = pattern;
+    int converted = 0;
 
     if (pattern == NULL || pattern_len <= 0) {
         return -EINVAL;
+    }
+
+    if (irrc_pattern_looks_pronto_cycles(carrier_freq, pattern, pattern_len)) {
+        pattern_us = malloc(sizeof(int) * (size_t)pattern_len);
+        if (pattern_us
+                && irrc_convert_pronto_to_us(carrier_freq, pattern,
+                        pattern_us, pattern_len) == 0) {
+            xmit_pattern = pattern_us;
+            converted = 1;
+            ALOGI("Pronto cycles→µs: header %d→%d (freq=%d)",
+                    pattern[0], pattern_us[0], carrier_freq);
+        } else {
+            free(pattern_us);
+            pattern_us = NULL;
+            ALOGW("Pronto convert alloc/convert failed; using raw pattern");
+        }
     }
 
     {
@@ -411,10 +499,12 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
 
         n += snprintf(preview + n, sizeof(preview) - n, "pattern:");
         for (j = 0; j < lim && n < (int)sizeof(preview) - 1; j++) {
-            n += snprintf(preview + n, sizeof(preview) - n, " %d", pattern[j]);
+            n += snprintf(preview + n, sizeof(preview) - n, " %d",
+                    xmit_pattern[j]);
         }
-        ALOGI("transmit %d entries at %d Hz; %s",
-                pattern_len, carrier_freq, preview);
+        ALOGI("transmit %d entries at %d Hz%s; %s",
+                pattern_len, carrier_freq,
+                converted ? " (Pronto→µs)" : "", preview);
     }
 
 #ifdef PR_SET_TIMERSLACK
@@ -438,7 +528,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
         tx.frequency = carrier_freq;
         tx.duty = IRRC_DUTY_PERCENT;
         tx.count = pattern_len;
-        tx.pattern = pattern;
+        tx.pattern = xmit_pattern;
 
         rc = ioctl(fd, IRRC_TRANSMIT, &tx);
         if (rc == 0) {
@@ -447,6 +537,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
             close(fd);
             irrc_lineout_stop(&lineout);
             pthread_mutex_unlock(&g_lock);
+            free(pattern_us);
             return 0;
         }
 
@@ -456,7 +547,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
     }
 
     for (i = 0; i < pattern_len; i++) {
-        if (pattern[i] < 0) {
+        if (xmit_pattern[i] < 0) {
             rc = -EINVAL;
             break;
         }
@@ -471,8 +562,8 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
             break;
         }
 
-        if (pattern[i] > 0) {
-            busy_wait_us(pattern[i]);
+        if (xmit_pattern[i] > 0) {
+            busy_wait_us(xmit_pattern[i]);
         }
     }
 
@@ -485,6 +576,7 @@ static int consumerir_transmit(struct consumerir_device *dev __unused,
 
     irrc_lineout_stop(&lineout);
     pthread_mutex_unlock(&g_lock);
+    free(pattern_us);
     return rc;
 }
 
