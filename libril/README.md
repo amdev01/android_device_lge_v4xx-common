@@ -3,9 +3,11 @@
 Fork of Lineage `hardware/ril` **cm-14.1-caf** `libril`, enabled via
 `BOARD_PROVIDES_LIBRIL := true`.
 
-Stock LG KitKat `libril-qc-qmi-1.so` returns `RIL_AppStatus` with five extra
-retry ints after `pin2`. AOSP/CAF `sizeof(RIL_CardStatus_v5/v6)` did not match,
-so `responseSimStatus` returned `INVALID_RESPONSE` and SIM stayed `NOT_READY`.
+Stock LG KitKat `libril-qc-qmi-1.so` returns `RIL_AppStatus` with **four**
+extra retry ints after `pin2` (`pin1`/`puk1`/`pin2`/`puk2` num_retries).
+Measured on v490: `responselen=408` ≡ `sizeof(RIL_CardStatus_v6)` with
+`AppStatus=48`. AOSP/CAF without those fields (or with a fifth
+`perso_unblock_retries`) mismatches and `responseSimStatus` returns
+`INVALID_RESPONSE` → SIM `NOT_READY`.
 
-This tree extends `RIL_AppStatus` accordingly. Retry fields are not written to
-the Java parcel (framework stays stock).
+Retry fields are not written to the Java parcel (framework stays stock).

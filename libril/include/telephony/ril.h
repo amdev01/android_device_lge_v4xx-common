@@ -1021,13 +1021,14 @@ typedef struct
   int              pin1_replaced;   /* applicable to USIM, CSIM & ISIM */
   RIL_PinState     pin1;
   RIL_PinState     pin2;
-  /* Qualcomm/LG KitKat QCRIL extensions (not parceled to Java; size must match
-   * vendor libril-qc-qmi-1.so GET_SIM_STATUS buffer — see klte / Lineage telephony). */
+  /* Qualcomm/LG KitKat QCRIL extensions (not parceled to Java). HITL on v490
+   * build 516d95b426: QCRIL returns responselen=408 == sizeof(RIL_CardStatus_v6)
+   * with exactly four retry ints (AppStatus=48). A fifth perso_unblock field
+   * made sizeof(v6)=440 and broke GET_SIM_STATUS. */
   int              pin1_num_retries;
   int              puk1_num_retries;
   int              pin2_num_retries;
   int              puk2_num_retries;
-  int              perso_unblock_retries;
 } RIL_AppStatus;
 
 /* Deprecated, use RIL_CardStatus_v6 */

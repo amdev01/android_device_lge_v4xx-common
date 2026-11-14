@@ -124,8 +124,9 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # RIL — rild from CAF (TARGET_RIL_VARIANT); libril from device/lge/v4xx-common/libril
-# (BOARD_PROVIDES_LIBRIL) with QC/LG KitKat RIL_AppStatus retry fields so
-# GET_SIM_STATUS matches stock libril-qc-qmi-1.so. Do NOT re-add blob libril.so.
+# (BOARD_PROVIDES_LIBRIL) with QC/LG KitKat RIL_AppStatus (4 pin/puk retry ints)
+# so sizeof(RIL_CardStatus_v6)==408 matches stock libril-qc-qmi-1.so.
+# Do NOT re-add blob libril.so.
 BOARD_GLOBAL_CFLAGS += -DUSE_RIL_VERSION_10
 BOARD_GLOBAL_CPPFLAGS += -DUSE_RIL_VERSION_10
 TARGET_RIL_VARIANT := caf
