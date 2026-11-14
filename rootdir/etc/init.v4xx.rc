@@ -123,6 +123,9 @@ on property:sys.boot_completed=1
     write /sys/kernel/mm/ksm/pages_to_scan 100
     write /sys/kernel/mm/ksm/sleep_millisecs 500
     write /sys/kernel/mm/ksm/run 1
+    # SoftAP: SoftapController writes ctrl_interface=sockets but attaches via
+    # hostapd/<iface>. Bind-mount (symlink blocked by SELinux for netd).
+    exec - root root -- /system/bin/sh /system/bin/wifi_softap_bind.sh
 
 
 service audiod /system/bin/audiod

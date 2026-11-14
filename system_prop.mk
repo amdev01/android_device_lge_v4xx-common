@@ -82,3 +82,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.qualcomm.sns.hal=e \
     debug.qualcomm.sns.libsensor1=e \
     ro.qc.sdk.sensors.gestures=false
+
+# Wifi SoftAP
+PRODUCT_PROPERTY_OVERRIDES += \
+    wifi.interface=wlan0 \
+    wlan.driver.config=/system/etc/wifi/WCNSS_qcom_cfg.ini

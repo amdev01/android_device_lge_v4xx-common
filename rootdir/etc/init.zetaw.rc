@@ -194,6 +194,10 @@ on post-fs-data
     # Create the directories used by the Wireless subsystem
     mkdir /data/misc/wifi 0771 wifi system
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    # SoftapController writes ctrl_interface=.../sockets but attaches via
+    # /data/misc/wifi/hostapd/<iface>. Real dir here; bind-mounted to sockets
+    # from wifi_softap_bind.sh after boot (symlink is blocked by SELinux).
+    mkdir /data/misc/wifi/hostapd 0770 wifi wifi
     mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
 
