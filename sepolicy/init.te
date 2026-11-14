@@ -4,8 +4,3 @@ allow init debugfs:dir mounton;
 allow init irrc_device:chr_file { getattr setattr };
 allow init sw_irrc_debugfs:dir search;
 allow init sw_irrc_debugfs:file { getattr setattr };
-
-# SoftAP: init bind-mounts /data/misc/wifi/sockets onto /data/misc/wifi/hostapd
-# (SoftapController attaches via hostapd/<iface> but hostapd writes to sockets)
-allow init wifi_data_file:dir { search getattr setattr mounton };
-allow init wpa_socket:dir { search getattr mounton };
