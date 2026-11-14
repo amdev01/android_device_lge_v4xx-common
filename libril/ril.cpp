@@ -4002,10 +4002,23 @@ static void sendSimStatusAppInfo(Parcel &p, int num_apps, RIL_AppStatus appStatu
         closeResponse;
 }
 
+/*
+ * LG KitKat QCRIL reports RIL_CARDSTATE_RESTRICTED with num_applications==0
+ * when the SIM is physically removed (HITL 2026-11-14). Android then never
+ * shows "No SIM" and keeps the stale subscription. Map that shape to ABSENT.
+ */
+static int32_t mapCardStateForFramework(int32_t card_state, int num_applications) {
+    if (card_state == RIL_CARDSTATE_RESTRICTED && num_applications <= 0) {
+        RLOGI("responseSimStatus: mapping RESTRICTED+0 apps -> ABSENT (LG QCRIL hot-remove)");
+        return RIL_CARDSTATE_ABSENT;
+    }
+    return card_state;
+}
+
 static void responseSimStatusV5(Parcel &p, void *response) {
     RIL_CardStatus_v5 *p_cur = ((RIL_CardStatus_v5 *) response);
 
-    p.writeInt32(p_cur->card_state);
+    p.writeInt32(mapCardStateForFramework(p_cur->card_state, p_cur->num_applications));
     p.writeInt32(p_cur->universal_pin_state);
     p.writeInt32(p_cur->gsm_umts_subscription_app_index);
     p.writeInt32(p_cur->cdma_subscription_app_index);
@@ -4017,7 +4030,7 @@ static void responseSimStatusV5(Parcel &p, void *response) {
 static void responseSimStatusV6(Parcel &p, void *response) {
     RIL_CardStatus_v6 *p_cur = ((RIL_CardStatus_v6 *) response);
 
-    p.writeInt32(p_cur->card_state);
+    p.writeInt32(mapCardStateForFramework(p_cur->card_state, p_cur->num_applications));
     p.writeInt32(p_cur->universal_pin_state);
     p.writeInt32(p_cur->gsm_umts_subscription_app_index);
     p.writeInt32(p_cur->cdma_subscription_app_index);

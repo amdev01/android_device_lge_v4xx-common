@@ -14,6 +14,14 @@ Measured on v490: `responselen=408` ≡ `sizeof(RIL_CardStatus_v6)` with
 
 Retry fields are not written to the Java parcel (framework stays stock).
 
+## Hot-remove card state (`CARD_RESTRICTED`)
+
+LG KitKat QCRIL reports `RIL_CARDSTATE_RESTRICTED` with `num_applications==0`
+when the SIM is physically removed (HITL 2026-11-14). Framework then never
+shows “No SIM” and keeps the stale subscription. `responseSimStatusV5/V6`
+maps that shape to `RIL_CARDSTATE_ABSENT`. Re-insert still needs a modem
+re-detect (often only at boot) — separate from this mapping.
+
 ## SIM_IO (`RIL_REQUEST_SIM_IO`)
 
 Stock LG KitKat QCRIL expects `RIL_SIM_IO_v6` with a leading `int cla`
