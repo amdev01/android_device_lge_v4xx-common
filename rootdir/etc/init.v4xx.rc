@@ -162,3 +162,11 @@ service wcnss-service /system/bin/wcnss_service
     user root
     group system wifi
     oneshot
+
+# SIM hot-insert recovery: tablets lack UIM card-detect; after remove/reinsert
+# the modem leaves the slot powered down. Restarting MPSS re-inits UIM (HITL
+# 2026-11-14: echo restart > .../msm_subsys/modem → READY). Trigger with
+# `setprop sys.radio.modem_ssr 1` or /system/bin/v4xx-sim-ssr (LTE SKUs).
+on property:sys.radio.modem_ssr=1
+    write /sys/kernel/debug/msm_subsys/modem restart
+    setprop sys.radio.modem_ssr 0
