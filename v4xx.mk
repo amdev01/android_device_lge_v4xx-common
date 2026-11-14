@@ -229,7 +229,6 @@ PRODUCT_PACKAGES += \
 # Wifi
 PRODUCT_PACKAGES += \
     hostapd \
-    hostapd_default.conf \
     libwcnss_qmi \
     libwpa_client \
     wcnss_service \
@@ -242,4 +241,4 @@ PRODUCT_COPY_FILES += \
     device/lge/v4xx-common/wcnss/WCNSS_qcom_wlan_nv.bin:system/etc/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin \
     device/lge/v4xx-common/wcnss/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
     device/lge/v4xx-common/wcnss/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
-    device/lge/v4xx-common/rootdir/etc/wifi_softap_bind.sh:system/bin/wifi_softap_bind.sh
+    device/lge/v4xx-common/wcnss/hostapd_default.conf:system/etc/hostapd/hostapd_default.conf
