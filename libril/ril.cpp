@@ -909,6 +909,9 @@ invalid:
  *   String data
  *   String pin2
  *   String aidPtr
+ *
+ * Device RIL_SIM_IO_v6 adds a leading `cla` int for KitKat LG QCRIL ABI
+ * (40-byte struct; command at +4). Parcel from Java has no cla field.
  */
 static void
 dispatchSIM_IO (Parcel &p, RequestInfo *pRI) {
@@ -920,6 +923,10 @@ dispatchSIM_IO (Parcel &p, RequestInfo *pRI) {
     int32_t t;
     int size;
     status_t status;
+    /* TS 27.007 +CRSM / AOSP IccFileHandler */
+    static const int SIM_CMD_GET_RESPONSE = 192; /* 0xC0 */
+    static const int GET_RESPONSE_EF_SIZE_BYTES = 15;
+    static const int EF_ICCID = 0x2FE2;
 
 #if VDBG
     RLOGD("dispatchSIM_IO");
@@ -927,6 +934,9 @@ dispatchSIM_IO (Parcel &p, RequestInfo *pRI) {
     memset (&simIO, 0, sizeof(simIO));
 
     // note we only check status at the end
+
+    /* LG/KK QCRIL: leading cla (0 for CRSM SIM_IO). Not present in RILJ parcel. */
+    simIO.v6.cla = 0;
 
     status = p.readInt32(&t);
     simIO.v6.command = (int)t;
@@ -949,9 +959,34 @@ dispatchSIM_IO (Parcel &p, RequestInfo *pRI) {
     simIO.v6.pin2 = strdupReadString(p);
     simIO.v6.aidPtr = strdupReadString(p);
 
+    /*
+     * Defensive CRSM/MF shims (secondary to the 40-byte cla ABI fix):
+     * 1) GET_RESPONSE with p3==0 → p3=15 (EF size bytes).
+     * 2) EF_ICCID (MF) with a USIM AID → drop AID so UIM uses card session.
+     */
+    if (simIO.v6.command == SIM_CMD_GET_RESPONSE && simIO.v6.p3 == 0) {
+        RLOGI("dispatchSIM_IO: GET_RESPONSE p3 0→%d efid=0x%X",
+                GET_RESPONSE_EF_SIZE_BYTES, simIO.v6.fileid);
+        simIO.v6.p3 = GET_RESPONSE_EF_SIZE_BYTES;
+    }
+    if (simIO.v6.fileid == EF_ICCID && simIO.v6.aidPtr != NULL) {
+        RLOGI("dispatchSIM_IO: ICCID clear aid (%s) for MF session",
+                simIO.v6.aidPtr);
+        free(simIO.v6.aidPtr);
+        simIO.v6.aidPtr = NULL;
+    }
+
+    RLOGI("dispatchSIM_IO: cla=%d cmd=0x%X efid=0x%X path=%s p1=%d p2=%d p3=%d aid=%s rilVer=%d size=%d",
+            simIO.v6.cla, simIO.v6.command, simIO.v6.fileid,
+            simIO.v6.path ? simIO.v6.path : "(null)",
+            simIO.v6.p1, simIO.v6.p2, simIO.v6.p3,
+            simIO.v6.aidPtr ? simIO.v6.aidPtr : "(null)",
+            s_callbacks.version,
+            (s_callbacks.version < 6) ? (int)sizeof(simIO.v5) : (int)sizeof(simIO.v6));
+
     startRequest;
-    appendPrintBuf("%scmd=0x%X,efid=0x%X,path=%s,%d,%d,%d,%s,pin2=%s,aid=%s", printBuf,
-        simIO.v6.command, simIO.v6.fileid, (char*)simIO.v6.path,
+    appendPrintBuf("%scla=%d,cmd=0x%X,efid=0x%X,path=%s,%d,%d,%d,%s,pin2=%s,aid=%s", printBuf,
+        simIO.v6.cla, simIO.v6.command, simIO.v6.fileid, (char*)simIO.v6.path,
         simIO.v6.p1, simIO.v6.p2, simIO.v6.p3,
         (char*)simIO.v6.data,  (char*)simIO.v6.pin2, simIO.v6.aidPtr);
     closeRequest;
@@ -961,7 +996,8 @@ dispatchSIM_IO (Parcel &p, RequestInfo *pRI) {
         goto invalid;
     }
 
-    size = (s_callbacks.version < 6) ? sizeof(simIO.v5) : sizeof(simIO.v6);
+    /* Always pass LG/KK RIL_SIM_IO_v6 (40 bytes with leading cla). */
+    size = sizeof(simIO.v6);
     CALL_ONREQUEST(pRI->pCI->requestNumber, &simIO, size, pRI, pRI->socket_id);
 
 #ifdef MEMSET_FREED

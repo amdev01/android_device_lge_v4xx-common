@@ -611,6 +611,16 @@ typedef struct {
 } RIL_SIM_IO_v5;
 
 typedef struct {
+    /*
+     * Qualcomm/LG KitKat QCRIL expects a leading int before command (stock LG
+     * libril sizeof=40). CAF/AOSP RIL_SIM_IO_v6 is 36 bytes without it; HITL
+     * on v490 showed qcril_uim_request_sim_io reading command at +4, so fileid
+     * was treated as cmd → "unknown cmd" / REQUEST_NOT_SUPPORTED for all
+     * SIM_IO. Field is not parceled from Java (always 0 for RIL_REQUEST_SIM_IO;
+     * SEEK/transmit paths may set CLA). Same class of ABI fix as RIL_AppStatus
+     * retry ints below.
+     */
+    int cla;
     int command;    /* one of the commands listed for TS 27.007 +CRSM*/
     int fileid;     /* EF id */
     char *path;     /* "pathid" from TS 27.007 +CRSM command.
