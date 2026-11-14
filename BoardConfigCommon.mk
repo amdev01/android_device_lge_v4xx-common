@@ -123,13 +123,13 @@ TARGET_RECOVERY_FSTAB := device/lge/v4xx-common/rootdir/etc/fstab.v4xx
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# RIL — CAF source-built rild/libril (hardware/ril-caf via TARGET_RIL_VARIANT).
-# QCRIL stays proprietary: /vendor/lib/libril-qc-qmi-1.so (do NOT re-add blob
-# bin/rild or lib/libril.so). Full qcril-from-source is not in manifests; Oreo
-# trees kept the same hybrid. See v4xx-releases context/.../RIL-DUAL-TRACK.md
+# RIL — rild from CAF (TARGET_RIL_VARIANT); libril from device/lge/v4xx-common/libril
+# (BOARD_PROVIDES_LIBRIL) with QC/LG KitKat RIL_AppStatus retry fields so
+# GET_SIM_STATUS matches stock libril-qc-qmi-1.so. Do NOT re-add blob libril.so.
 BOARD_GLOBAL_CFLAGS += -DUSE_RIL_VERSION_10
 BOARD_GLOBAL_CPPFLAGS += -DUSE_RIL_VERSION_10
 TARGET_RIL_VARIANT := caf
+BOARD_PROVIDES_LIBRIL := true
 
 # SDClang
 TARGET_USE_SDCLANG := true

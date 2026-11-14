@@ -205,10 +205,11 @@ PRODUCT_PACKAGES += \
     librmnetctl \
     libxml2
 
-# Radio — rild/libril come from CAF (TARGET_RIL_VARIANT); QCRIL is vendor blob.
-# Guardrail: never PRODUCT_COPY proprietary bin/rild or lib/libril.so.
+# Radio — rild from CAF; libril from device (BOARD_PROVIDES_LIBRIL / libril/);
+# QCRIL stays vendor blob. Never PRODUCT_COPY proprietary bin/rild or lib/libril.so.
 PRODUCT_PACKAGES += \
-    libxml2
+    libxml2 \
+    libril
 
 # Ramdisk
 PRODUCT_PACKAGES += \
