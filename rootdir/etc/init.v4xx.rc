@@ -47,6 +47,17 @@ on post-fs-data
 on early-boot
     start timepersist
 
+# Sudden-death HITL: mirror kmsg/logcat to /cache (survives RESIN DRAM wipe).
+# Debuggable builds only — pull /cache/v4xx-crashlog from TWRP after a death.
+on property:ro.debuggable=1
+    start v4xx-crashlog
+
+service v4xx-crashlog /system/bin/sh /v4xx-crashlog.sh
+    class core
+    user root
+    group root system log
+    disabled
+
 on boot
    chown media media /sys/bus/platform/devices/cam_sensor_vt/antibanding
    chmod 644 /sys/bus/platform/devices/cam_sensor_vt/antibanding

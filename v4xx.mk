@@ -224,7 +224,8 @@ PRODUCT_PACKAGES += \
     init.zetaw.syspart_fixup.sh \
     init.zetaw.usb.rc \
     init.zetaw.usb.sh \
-    ueventd.v4xx.rc
+    ueventd.v4xx.rc \
+    v4xx-crashlog.sh
 
 # Wifi
 PRODUCT_PACKAGES += \
