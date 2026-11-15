@@ -215,6 +215,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.v4xx \
     init.v4xx.rc \
+    init.v4xx-ims.rc \
     init.lge.rc \
     init.zetaw.bt_vendor.rc \
     init.zetaw.class_core.sh \

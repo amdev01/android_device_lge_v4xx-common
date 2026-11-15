@@ -1,0 +1,30 @@
+# QTI IMS — daemons from v4xx-ims.mk (v410/v490 set persist.radio.ims_daemon=1).
+# Framework VoLTE remains overlay-gated until ImsService bind + IMS_REG.
+
+service imsqmidaemon /system/bin/imsqmidaemon
+    class main
+    user system
+    socket ims_qmidi stream 660 system radio
+    group radio log diag qcom_diag
+    disabled
+
+service imsdatadaemon /system/bin/imsdatadaemon
+    class main
+    user system
+    group system wifi radio net_raw log qcom_diag net_admin
+    disabled
+
+on property:sys.ims.QMI_DAEMON_STATUS=1
+    start imsdatadaemon
+
+service ims_rtp_daemon /system/bin/ims_rtp_daemon
+    class main
+    user system
+    group radio net_raw diag qcom_diag log
+    disabled
+
+on property:sys.ims.DATA_DAEMON_STATUS=1
+    start ims_rtp_daemon
+
+on property:persist.radio.ims_daemon=1
+    start imsqmidaemon

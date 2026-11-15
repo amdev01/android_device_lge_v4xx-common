@@ -1,6 +1,7 @@
 import /init.zetaw.rc
 import /init.lge.early.rc
 import /init.lge.rc
+import /init.v4xx-ims.rc
 
 on early-init
     mkdir /firmware 0771 system system
@@ -138,24 +139,7 @@ service adsprpcd /system/bin/adsprpcd
     user media
     group media
 
-# imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
-service imsdatadaemon /system/bin/imsdatadaemon
-    class main
-    user root
-    group system wifi radio net_raw log qcom_diag net_admin
-    disabled
-
-on property:sys.ims.QMI_DAEMON_STATUS=1
-    start imsdatadaemon
-
-service ims_rtp_daemon /system/bin/ims_rtp_daemon
-    class main
-    user system
-    group radio net_raw diag qcom_diag log
-    disabled
-
-on property:sys.ims.DATA_DAEMON_STATUS=1
-    start ims_rtp_daemon
+# QTI IMS services live in init.v4xx-ims.rc (v410/v490 only).
 
 service wcnss-service /system/bin/wcnss_service
     class late_start

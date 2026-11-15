@@ -4,3 +4,6 @@ allow init debugfs:dir mounton;
 allow init irrc_device:chr_file { getattr setattr };
 allow init sw_irrc_debugfs:dir search;
 allow init sw_irrc_debugfs:file { getattr setattr };
+
+# Modem SSR for SIM recover (init.v4xx.rc write .../msm_subsys/modem)
+allow init debugfs:file write;
