@@ -41,9 +41,24 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.hw=1 \
+    debug.composition.type=c2d \
     persist.hwc.mdpcomp.enable=true \
     ro.opengles.version=196608 \
     ro.sf.lcd_density=213
+
+# HWUI — conservative caches for 1 GB / 7–8" HDPI tablets (avoid phone xxhdpi heaps)
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.hwui.texture_cache_size=20 \
+    ro.hwui.layer_cache_size=16 \
+    ro.hwui.path_cache_size=4 \
+    ro.hwui.r_buffer_cache_size=2 \
+    ro.hwui.drop_shadow_cache_size=2 \
+    ro.hwui.gradient_cache_size=0.5 \
+    ro.hwui.texture_cache_flushrate=0.5 \
+    ro.hwui.text_small_cache_width=1024 \
+    ro.hwui.text_small_cache_height=512 \
+    ro.hwui.text_large_cache_width=2048 \
+    ro.hwui.text_large_cache_height=1024
 
 # GPS
 PRODUCT_PROPERTY_OVERRIDES += \

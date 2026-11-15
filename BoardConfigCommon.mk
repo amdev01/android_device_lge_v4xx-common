@@ -70,6 +70,9 @@ BOARD_GLOBAL_CFLAGS += -DCAMERA_VENDOR_L_COMPAT
 BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/cmhw/
 TARGET_TAP_TO_WAKE_NODE := "/sys/devices/virtual/input/lge_touch/tap_to_wake"
 
+# Memory — Mot msm8226/falcon pattern for 1 GB devices (jemalloc svelte)
+MALLOC_SVELTE := true
+
 # Display
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 TARGET_USES_C2D_COMPOSITION := true
