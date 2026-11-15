@@ -1,2 +1,14 @@
 allow qti_init_shell modem_block_device:blk_file r_file_perms;
 allow qti_init_shell radio_prop:property_service set;
+
+# v4xx-crashlog.sh — early HITL mirror of kmsg/logcat onto /cache (survives RESIN).
+# Without this, mkdir is denied and the service restart-storms with empty artifacts.
+allow qti_init_shell cache_file:dir { create getattr setattr search write add_name remove_name open read rmdir };
+allow qti_init_shell cache_file:file { create getattr setattr open read write append unlink rename };
+allow qti_init_shell kmsg_device:chr_file { open read };
+allow qti_init_shell kernel:system syslog_read;
+allow qti_init_shell logdr_socket:sock_file write;
+allow qti_init_shell logd:unix_stream_socket connectto;
+# dmesg / getprop helpers
+allow qti_init_shell self:capability { dac_override dac_read_search };
+allow qti_init_shell proc:file { open read getattr };

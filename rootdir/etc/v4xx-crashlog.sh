@@ -2,15 +2,37 @@
 # Early boot crash mirror → /cache (survives KPDPWR_AND_RESIN DRAM wipe).
 # Debuggable builds only. After death, from TWRP:
 #   adb pull /cache/v4xx-crashlog
+#
+# Guard: only eng/userdebug. Init starts us on post-fs-data_done for all
+# builds that set that prop — exit quietly on user.
 
 DIR=/cache/v4xx-crashlog
-mkdir -p "$DIR" 2>/dev/null || exit 0
+
+debuggable=$(getprop ro.debuggable 2>/dev/null)
+if [ "$debuggable" != "1" ]; then
+  # Non-oneshot service: exiting would respawn forever. Idle instead.
+  while true; do sleep 3600; done
+fi
+
+# Retry mkdir briefly (SEPolicy/init race); never exit 0 on failure — that
+# caused an init restart storm when mkdir was denied.
+ok=0
+i=0
+while [ "$i" -lt 30 ]; do
+  mkdir -p "$DIR" 2>/dev/null && ok=1 && break
+  i=$((i + 1))
+  sleep 1
+done
+if [ "$ok" != "1" ]; then
+  echo "v4xx-crashlog: mkdir $DIR failed" > /dev/kmsg
+  # Stay alive doing nothing so init does not respawn us every few seconds
+  while true; do sleep 3600; done
+fi
 
 for f in meta.txt dmesg-at-start.txt kmsg.log logcat.log; do
   [ -e "$DIR/$f" ] || continue
   mv -f "$DIR/$f" "$DIR/${f}.prev" 2>/dev/null
 done
-# rotate prior logcat chunks
 for f in "$DIR"/logcat.log.*; do
   [ -e "$f" ] || continue
   mv -f "$f" "${f}.prev" 2>/dev/null
@@ -28,11 +50,9 @@ done
 dmesg > "$DIR/dmesg-at-start.txt" 2>/dev/null
 sync
 
-# Kernel console → eMMC (bounded by periodic truncate in sync loop)
 : > "$DIR/kmsg.log"
 cat /proc/kmsg >> "$DIR/kmsg.log" 2>/dev/null &
 
-# logd → rotating 1MB x 8 once socket exists
 (
   i=0
   while [ "$i" -lt 90 ]; do
@@ -43,7 +63,6 @@ cat /proc/kmsg >> "$DIR/kmsg.log" 2>/dev/null &
   logcat -v threadtime -b all -f "$DIR/logcat.log" -r 1024 -n 8
 ) &
 
-# fsync barrier + keep kmsg.log from growing without bound
 while true; do
   sync
   sz=$(wc -c < "$DIR/kmsg.log" 2>/dev/null || echo 0)

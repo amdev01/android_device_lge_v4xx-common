@@ -35,6 +35,8 @@ on post-fs-data
     mkdir /tombstones/modem 0771 system system
     # Offset files for timepersist + TWRP QCOM RTC fix
     mkdir /data/time 0771 system system
+    # Sudden-death HITL sink (eMMC; survives KPDPWR_AND_RESIN DRAM wipe)
+    mkdir /cache/v4xx-crashlog 0775 root system
 
     chown system system /sys/class/timed_output/vibrator/vtg_level
     chown system system /sys/class/timed_output/vibrator/vtg_max
@@ -50,7 +52,8 @@ on early-boot
 
 # Sudden-death HITL: mirror kmsg/logcat to /cache (survives RESIN DRAM wipe).
 # Debuggable builds only — pull /cache/v4xx-crashlog from TWRP after a death.
-on property:ro.debuggable=1
+# Start after post-fs-data so /cache exists; qti_init_shell needs cache write SEPolicy.
+on property:vold.post_fs_data_done=1
     start v4xx-crashlog
 
 service v4xx-crashlog /system/bin/sh /v4xx-crashlog.sh
