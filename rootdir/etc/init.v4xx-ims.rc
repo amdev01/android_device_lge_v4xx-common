@@ -23,8 +23,15 @@ service ims_rtp_daemon /system/bin/ims_rtp_daemon
     group radio net_raw diag qcom_diag log
     disabled
 
+service imscmservice /system/bin/imscmservice
+    class main
+    user system
+    group radio log diag qcom_diag
+    disabled
+
 on property:sys.ims.DATA_DAEMON_STATUS=1
     start ims_rtp_daemon
+    start imscmservice
 
 on property:persist.radio.ims_daemon=1
     start imsqmidaemon
