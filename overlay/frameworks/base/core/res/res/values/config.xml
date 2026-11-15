@@ -65,6 +65,11 @@
     <!-- Boolean indicating whether the wifi chipset has background scan support -->
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
+    <!-- Prima/WCNSS is dual-band; required for Settings WifiApDialog to offer 5 GHz
+         SoftAP (isDualBandSupported → wifi_ap_band_config_full). Default in
+         frameworks/base is false, which forces wifi_ap_band_config_2G_only. -->
+    <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
+
     <!-- Setting this true forces the headset jack switches to use the/dev/input/event subsystem
          rather than the uevent framework. -->
     <bool name="config_useDevInputEventForAudioJack">true</bool>
