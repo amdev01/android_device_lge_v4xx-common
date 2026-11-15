@@ -18,6 +18,10 @@
 /dev/block/platform/msm_sdcc.1/by-name/sns      /sns        ext4   nosuid,nodev,barrier=1,data=ordered                                                 wait,check,notrim
 /dev/block/platform/msm_sdcc.1/by-name/pad      /misc       emmc   defaults                                                                            defaults
 
+# In-RAM compressed swap (kernel already CONFIG_ZRAM=y + LZ4). Not eMMC — avoids
+# flash thrash on 1 GiB devices. swapon_all in init.v4xx.rc activates this.
+/dev/block/zram0                               none        swap   defaults                                                                            zramsize=268435456
+
 /dev/block/platform/msm_sdcc.1/by-name/boot     /boot       emmc   defaults                                                                            recoveryonly
 /dev/block/platform/msm_sdcc.1/by-name/recovery /recovery   emmc   defaults                                                                            recoveryonly
 
