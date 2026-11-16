@@ -33,5 +33,18 @@ on property:sys.ims.DATA_DAEMON_STATUS=1
     start ims_rtp_daemon
     start imscmservice
 
+# Bridge rild_ims → rild_ims0 when jbims creates the QCRIL IMS socket.
+service ims_rild_ims0_link /system/bin/sh /system/etc/ims_rild_ims0.sh
+    class main
+    user root
+    group root
+    oneshot
+    disabled
+
 on property:persist.radio.ims_daemon=1
     start imsqmidaemon
+    start ims_rild_ims0_link
+
+on property:persist.radio.jbims=1
+    start ims_rild_ims0_link
+

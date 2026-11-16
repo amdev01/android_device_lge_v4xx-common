@@ -27,6 +27,14 @@ LOCAL_MODULE_PATH       := $(TARGET_ROOT_OUT)
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE            := ims_rild_ims0.sh
+LOCAL_MODULE_TAGS       := optional eng
+LOCAL_MODULE_CLASS      := ETC
+LOCAL_SRC_FILES         := etc/ims_rild_ims0.sh
+LOCAL_MODULE_PATH       := $(TARGET_OUT_ETC)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE            := init.lge.rc
 LOCAL_MODULE_TAGS       := optional eng
 LOCAL_MODULE_CLASS      := ETC

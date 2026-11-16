@@ -1,0 +1,6 @@
+# QTI imsqmidaemon (HITL 2026-11-15): creates /data/data/imsqmisocket under
+# system_data_file. Upstream device/qcom/sepolicy has no transition; without it
+# AVC denies write on /data and sys.ims.QMI_DAEMON_STATUS never becomes 1.
+type_transition ims system_data_file:sock_file ims_socket;
+allow ims system_data_file:dir { write add_name remove_name search getattr };
+allow ims ims_socket:sock_file { create open getattr setattr unlink write read };

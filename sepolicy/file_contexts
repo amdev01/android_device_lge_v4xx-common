@@ -24,6 +24,9 @@
 /dev/block/mmcblk0rpmb                            u:object_r:rpmb_device:s0
 
 /dev/socket/mpctl                                 u:object_r:mpctl_socket:s0
+# init.v4xx-ims.rc uses ims_qmidi; upstream qcom labels ims_qmid only.
+/dev/socket/ims_qmidi                             u:object_r:ims_socket:s0
+
 
 /persist/sensors/sensors_settings                 u:object_r:sensors_persist_file:s0
 /persist-lg(/.*)?                                 u:object_r:persist_drm_file:s0
