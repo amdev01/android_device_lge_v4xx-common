@@ -34,7 +34,9 @@ on property:sys.ims.DATA_DAEMON_STATUS=1
     start imscmservice
 
 # Bridge rild_ims → rild_ims0 when jbims creates the QCRIL IMS socket.
-service ims_rild_ims0_link /system/bin/sh /system/etc/ims_rild_ims0.sh
+# N init: service names ≤16 chars ([a-zA-Z0-9_-].). HITL rejected
+# ims_rild_ims0_link (18). Keep this name ≤16.
+service ims-rild-ims0 /system/bin/sh /system/etc/ims_rild_ims0.sh
     class main
     user root
     group root
@@ -43,8 +45,8 @@ service ims_rild_ims0_link /system/bin/sh /system/etc/ims_rild_ims0.sh
 
 on property:persist.radio.ims_daemon=1
     start imsqmidaemon
-    start ims_rild_ims0_link
+    start ims-rild-ims0
 
 on property:persist.radio.jbims=1
-    start ims_rild_ims0_link
+    start ims-rild-ims0
 

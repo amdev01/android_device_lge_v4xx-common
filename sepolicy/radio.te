@@ -1,0 +1,3 @@
+# m216 ImsService IFMsg_Rxr connects via symlink qmux_radio/rild_ims0 → rild_ims
+# (HITL 2026-11-16): AVC denied { read } lnk_file under Enforcing.
+allow radio qmuxd_socket:lnk_file { read getattr };
