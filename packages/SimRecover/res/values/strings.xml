@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Recover SIM</string>
+    <string name="title">Recover SIM (modem restart)</string>
+    <string name="message">This tablet has no SIM card-detect line. After removing and reinserting the SIM, tap Recover to restart the modem subsystem (not a full reboot).\n\nCellular will drop briefly, then the SIM should return to READY.</string>
+    <string name="recover">Recover</string>
+    <string name="cancel">Cancel</string>
+    <string name="triggered">Modem restart requested…</string>
+</resources>

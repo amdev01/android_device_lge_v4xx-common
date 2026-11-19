@@ -1,3 +1,4 @@
 persist.data.rear.minfps	u:object_r:media_prop:s0
 persist.data.front.minfps	u:object_r:media_prop:s0
 persist.sys.timeadjust		u:object_r:timekeep_prop:s0
+sys.radio.modem_ssr		u:object_r:v4xx_radio_ssr_prop:s0

@@ -18,6 +18,7 @@ LOCAL_SRC_FILES         := etc/init.v4xx.rc
 LOCAL_MODULE_PATH       := $(TARGET_ROOT_OUT)
 include $(BUILD_PREBUILT)
 
+
 include $(CLEAR_VARS)
 LOCAL_MODULE            := init.lge.rc
 LOCAL_MODULE_TAGS       := optional eng

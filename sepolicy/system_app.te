@@ -1,2 +1,5 @@
 # TimePersist (org.lineageos.timepersist) stores wall-RTC offset
 allow system_app timekeep_prop:property_service set;
+
+# SimRecover → init.v4xx.rc modem SSR
+allow system_app v4xx_radio_ssr_prop:property_service set;
