@@ -131,9 +131,8 @@ vendor/lib/libmmipstreamaal.so
 bin/mpdecision
 vendor/lib/libqc-opt.so
 
-# Sensors
+# Sensors — HAL/libs stay common; sensors.qcom is per-device (stock KDZ)
 bin/irsc_util
-bin/sensors.qcom
 vendor/lib/hw/sensors.msm8226.so
 vendor/lib/libbmc050.so
 vendor/lib/libsensor1.so
