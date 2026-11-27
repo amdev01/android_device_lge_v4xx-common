@@ -396,11 +396,15 @@ service ril-qmi /system/bin/sh /init.zetaw.ril.sh
     oneshot
 
 on property:vold.decrypt=trigger_restart_framework
-    start sensors
     start zetaw-c_main-sh
     start config_bluetooth
 
-on property:vold.decrypt=trigger_restart_min_framework
+# Sensors only when wifi qmux gate is off (LTE sets ro.v4xx.wifi_qmux_gate=0;
+# wifi Phase0B sets =1 and skips — avoids CANNOT LINK abort storm).
+on property:vold.decrypt=trigger_restart_framework && property:ro.v4xx.wifi_qmux_gate=0
+    start sensors
+
+on property:vold.decrypt=trigger_restart_min_framework && property:ro.v4xx.wifi_qmux_gate=0
     start sensors
 
 on property:persist.env.fastdorm.enabled=true

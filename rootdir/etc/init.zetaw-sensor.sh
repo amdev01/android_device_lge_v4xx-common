@@ -31,6 +31,10 @@
 #
 start_sensors()
 {
+    # WiFi Phase0B gate: libqmi_client_qmux.so absent → sensors.qcom abort loop
+    if [ "$(getprop ro.v4xx.wifi_qmux_gate)" = "1" ]; then
+        return 0
+    fi
     if [ -c /dev/msm_dsps -o -c /dev/sensors ]; then
         chmod -h 775 /persist/sensors
         chmod -h 664 /persist/sensors/sensors_settings
