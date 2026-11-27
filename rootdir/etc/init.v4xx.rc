@@ -113,9 +113,8 @@ service mpdecision /system/bin/mpdecision --avg_comp
    user root
    group system
 
-# thermal-engine needs live QMI qmux. On wifi (v400/v480) shipping qmux live
-# historically correlates with EDL/PS_HOLD (DEADBOOT-PLAN Phase0B/1/3A). LTE
-# starts it below; wifi keeps it disabled unless qmux is intentionally restored.
+# thermal-engine needs live QMI qmux. Phase3B: wifi is safe with download_mode=0
+# + SSR RELATED; start on all four SKUs.
 service thermal-engine /system/bin/thermal-engine
    class main
    user root
@@ -131,13 +130,13 @@ on property:ro.product.device=v490
 # Phase 3B HITL (2026-11-27): download_mode=1 + SSR SYSTEM turns wifi qmux
 # deaths into QHSUSB/EDL. With download_mode=0 + RELATED, live qmux +
 # thermal-engine survived ≥4 min; flipping both back reproduced EDL in ~14s.
-# LTE unchanged.
 on property:ro.product.device=v400
     write /sys/module/restart/parameters/download_mode 0
     write /sys/bus/msm_subsys/devices/subsys0/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys1/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys2/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys3/restart_level RELATED
+    start thermal-engine
 
 on property:ro.product.device=v480
     write /sys/module/restart/parameters/download_mode 0
@@ -145,6 +144,7 @@ on property:ro.product.device=v480
     write /sys/bus/msm_subsys/devices/subsys1/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys2/restart_level RELATED
     write /sys/bus/msm_subsys/devices/subsys3/restart_level RELATED
+    start thermal-engine
 
 on property:sys.boot_completed=1
     # Set up KSM
