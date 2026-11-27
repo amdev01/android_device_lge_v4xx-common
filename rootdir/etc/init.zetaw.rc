@@ -401,10 +401,23 @@ on property:vold.decrypt=trigger_restart_framework
 
 # Sensors only when wifi qmux gate is off (LTE sets ro.v4xx.wifi_qmux_gate=0;
 # wifi Phase0B sets =1 and skips — avoids CANNOT LINK abort storm).
+#
+# Early start: ro.* from build.prop is set before zygote. Starting here makes
+# sensors.qcom own sensor_ctl_socket before SensorService/HAL binds (fixes
+# intermittent empty "No Sensors" race). Keep service `disabled` so gate=1
+# never class_start's it.
+on property:ro.v4xx.wifi_qmux_gate=0
+    start sensors
+
 on property:vold.decrypt=trigger_restart_framework && property:ro.v4xx.wifi_qmux_gate=0
     start sensors
 
 on property:vold.decrypt=trigger_restart_min_framework && property:ro.v4xx.wifi_qmux_gate=0
+    start sensors
+
+# Safety net: ensure daemon is up after boot. Framework SensorDevice (amdev01
+# frameworks_native) also retries open/list until sensors.qcom enumerates.
+on property:sys.boot_completed=1 && property:ro.v4xx.wifi_qmux_gate=0
     start sensors
 
 on property:persist.env.fastdorm.enabled=true
@@ -622,8 +635,10 @@ service zetaw-sh /system/bin/sh /init.zetaw.sh
     user root
     oneshot
 
+# class core: chmod persist + start sensors before class main / zygote.
+# Primary early start is still on property:ro.v4xx.wifi_qmux_gate=0 above.
 service qcom-sensor-sh /system/bin/sh /init.zetaw-sensor.sh
-    class main
+    class core
     user root
     oneshot
 
