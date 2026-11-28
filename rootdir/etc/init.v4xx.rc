@@ -146,6 +146,30 @@ on property:ro.product.device=v480
     write /sys/bus/msm_subsys/devices/subsys3/restart_level RELATED
     start thermal-engine
 
+# Exp A (2026-11-27/28): stay-awake survives; screen-off → PS_HOLD. init.zetaw.rc
+# enables msm_pm power_collapse suspend at bootanim.exit; wifi SKUs (no modem
+# XO after MSS disable) die in that path. Keep idle/retention; clear suspend PC
+# only on v400/v480. Runs after the common enable (same trigger, later file).
+on property:service.bootanim.exit=1 && property:ro.product.device=v400
+    write /sys/module/msm_pm/modes/cpu0/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu0/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/standalone_power_collapse/suspend_enabled 0
+
+on property:service.bootanim.exit=1 && property:ro.product.device=v480
+    write /sys/module/msm_pm/modes/cpu0/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu0/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/standalone_power_collapse/suspend_enabled 0
+
 on property:sys.boot_completed=1
     # Set up KSM
     write /sys/kernel/mm/ksm/deferred_timer 1
@@ -158,6 +182,27 @@ on property:sys.boot_completed=1
     write /sys/block/mmcblk0/queue/scheduler bfq
     write /sys/block/mmcblk0/bdi/read_ahead_kb 128
     write /proc/sys/vm/swappiness 80
+
+# Re-apply wifi suspend-PC disable after late userspace (belt/suspenders).
+on property:sys.boot_completed=1 && property:ro.product.device=v400
+    write /sys/module/msm_pm/modes/cpu0/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu0/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/standalone_power_collapse/suspend_enabled 0
+
+on property:sys.boot_completed=1 && property:ro.product.device=v480
+    write /sys/module/msm_pm/modes/cpu0/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu0/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu1/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu2/standalone_power_collapse/suspend_enabled 0
+    write /sys/module/msm_pm/modes/cpu3/standalone_power_collapse/suspend_enabled 0
 
 service audiod /system/bin/audiod
     class late_start
